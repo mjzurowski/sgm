@@ -38,4 +38,16 @@ class DMModel(ABC):
             rho: DM density [GeV]/[cm]^3
         """
         vm = self.vmin(Target,mX,ER)
-        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*self.dsigdER(Target,mX,ER,sig)*VelDist.dist(vm) ### Need to add normalisation terms
+        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*self.dsigdER(Target,mX,ER,sig)*VelDist.dist(vm)
+    ## need to do something where we can use the g and h forms...
+        # if len(self.dsigdER(Target,mX,ER,sig))!=len(VelDist.dist(vm)):
+        #     print("Incorrect definition/combination of velocity distribution and form factors.")
+        #     return 0
+        # if len(self.dsigdER(Target,mX,ER,sig))==1:
+        #     # dependence on only g velocity integral
+        #     return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*self.dsigdER(Target,mX,ER,sig)*VelDist.dist(vm)
+        # else:
+        #     # need to sum g and h contributions
+        #     #### I don't love this implementation, but can't think of anything better right now...
+        #     return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(self.dsigdER(Target,mX,ER,sig)[0]*VelDist.dist(vm)[0]+self.dsigdER(Target,mX,ER,sig)[1]*VelDist.dist(vm)[1])
+

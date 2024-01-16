@@ -61,6 +61,9 @@ class Detector(ABC):
 ### General detector terms
     @abstractmethod
     def ROI(self):
+        """
+        Energy region of interest ([keV_0]) to try and help the integral focus
+        """
         pass
 
     @abstractmethod

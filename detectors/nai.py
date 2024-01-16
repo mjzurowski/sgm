@@ -26,7 +26,7 @@ class DAMA(Detector):
         return 20
     
     def DeltaE(self,E):
-        return 0.4427*pow(E,0.5)
+        return (0.488*pow(E,0.5))+(0.0091*E)
     
     def Res(self,E1,E2):
         A = 1./(np.sqrt(2.*np.pi)*self.DeltaE(E2))
