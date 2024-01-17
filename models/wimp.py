@@ -26,7 +26,8 @@ class SIWIMP(DMModel):
         Output units: [cm^2]/[eV] 
         """
         FF = Target.F11(ER,1/np.sqrt(2),1/np.sqrt(2)) ## cross section with couplings. Note that proton and neutron couplings are normalised to 1
-        return sig*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX))
+        cross_sec = sig*2 ## as we normalise the nucleon vector [cn, cp] our built in cross section is sigma_N. Multiply by 2 to get this from sigma_p (which is generally assumed to be the input)
+        return cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX))
 
 
 class SIWIMP_Helm(DMModel):

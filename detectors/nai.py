@@ -17,7 +17,7 @@ class DAMA(Detector):
         return [E*1E3/0.3]
     
     def dERdE(self,E):
-        return [1/0.3]
+        return [1/0.3] ### ideally this should just be computed automatically in detector.py
     
     def ROI(self):
         return [0,6]
