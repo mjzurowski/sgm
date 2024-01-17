@@ -1,8 +1,6 @@
 from dmmodel import DMModel
 import numpy as np
-
-c = 299792458. # speed of light in m/s
-kg_to_eV = 1.8E-36 # conversion between eV and kg
+from constants import *
 
 ### Class definition for standard SI WIMP.
 
@@ -29,7 +27,9 @@ class SIWIMP(DMModel):
         cross_sec = sig*2 ## as we normalise the nucleon vector [cn, cp] our built in cross section is sigma_N. Multiply by 2 to get this from sigma_p (which is generally assumed to be the input)
         return cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX))
 
-
+######################################################
+### Class definition for standard SI WIMP with Helm form factors
+    
 class SIWIMP_Helm(DMModel):
     def vmin(self,Target,mX,ER):
        """

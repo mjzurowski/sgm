@@ -1,10 +1,11 @@
 import numpy as np
 from detector import Detector
-from targets.na import Na
+from targets.targets import Na, I
+from constants import *
 
 class DAMA(Detector):
     def Nuclei(self):
-        return [Na()]
+        return [Na(),I()]
     
     def ER_E(self,E):
         ### This function will ultimately need some way to distinguish between NR and ER
@@ -14,10 +15,10 @@ class DAMA(Detector):
 
         Output units: [eV] recoil energy keV
         """
-        return [E*1E3/0.3]
+        return [E*keV/0.3, E*keV/0.09]
     
     def dERdE(self,E):
-        return [1/0.3] ### ideally this should just be computed automatically in detector.py
+        return [1/0.3, 1/0.09] ### ideally this should just be computed automatically in detector.py
     
     def ROI(self):
         return [0,6]

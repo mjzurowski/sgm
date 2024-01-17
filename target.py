@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from constants import *
 
-mp =  0.9314941*1E9 # mass of a nulceon in eV.
 #### Fundamental properties of a target that won't change between detectors (e.g., mass, form factors)
 
 class Target(ABC):

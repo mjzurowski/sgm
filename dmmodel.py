@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
-
-c = 299792458. # speed of light in m/s
-cpd_conversion = 86400*c*1E14 # for conversion to units of cpd/kg/keV
+from constants import *
 
 class DMModel(ABC):
     @abstractmethod

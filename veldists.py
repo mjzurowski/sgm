@@ -1,5 +1,6 @@
 import numpy as np
-c = 299792458. # speed of light [km/s]
+from constants import *
+
 #### Read in the existing velocity distributions and create the interpolation functions that will be called when computing DM rate
 
 class VelDist:
