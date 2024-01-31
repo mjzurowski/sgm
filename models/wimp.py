@@ -28,7 +28,7 @@ class SIWIMP(DMModel):
         cross_sec = sig*2 ## as we normalise the nucleon vector [cn, cp] our built in cross section is sigma_N. Multiply by 2 to get this from sigma_p (which is generally assumed to be the input)
         dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
         vm = self.vmin(Target,mX,ER)
-        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.dist(vm)
+        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
 
 
 ######################################################
@@ -57,4 +57,4 @@ class SIWIMP_Helm(DMModel):
         FF = Target.Helm(ER)**2 ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
         dsigdER = (1/kg_to_eV)*sig*FF*Target.A()*Target.A()/(2*Target.N_T()*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
         vm = self.vmin(Target,mX,ER)
-        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.dist(vm)
+        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
