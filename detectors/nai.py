@@ -1,6 +1,7 @@
 import numpy as np
 from detector import Detector
-from targets.targets import Na, I
+from targets.na import Na
+from targets.i import I
 from constants import *
 
 class DAMA(Detector):

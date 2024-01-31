@@ -250,3 +250,30 @@ class Target(ABC):
         n_p = cn4*cp6*self.FS2np(ER)
         n_n = cn4*cn6*self.FS2nn(ER)
         return self.spin_dep(jx)*np.power(self.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)/8
+    
+    @abstractmethod
+    def eNL(self):
+        """
+        List of transition energies for the target
+        Should have units of eV
+        """
+        pass
+
+    @abstractmethod
+    def eTransEM(self):
+        """
+        Files that give electron transition probability as a function of total electronic energy (E_EM = electron energy + nuclear bonding)
+        Note that targets will have multiple of these depending on the transition energies allowed
+        These should have units of [eV]^-1 and be passed as a list the same length as eNL
+        """
+        pass
+
+    def eTrans(self,E_E):
+        """
+        Electron transition probability as a function of electron kinetic energy (i.e., what will be observed in a detector). Transforms eTransEM based on the transition energies
+        Should still be a list of the same length (and in units of [eV]^-1) as it later needs to be paired with appropriate vmins
+        """
+        trans_list = []
+        for i in range(0,len(self.eNL)):
+            trans_list.append(np.interp(E_E-self.eNL[i],self.eTransEM[i][:,0],self.eTransEM[i][:,1])*np.heaviside(E_E-self.eNL[i],1))
+        return trans_list
