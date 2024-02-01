@@ -6,10 +6,10 @@ Further details about how the calculation is performed can be found in the pdf d
 The calculation is performed using a number of user defined objects:
 
 1. Target (target.py)
-A target is a nucleus able to undergo scattering. It should be defined with its mass number and nuclear form factors.
+A target is a nucleus able to undergo scattering. It should be defined with its mass number, nuclear form factors, and electron transition probabilities.
 The current targets are available:
-- Na (targets.py)
-- I (targets.py)
+- Na (na.py)
+- I (i.py)
 
 2. DM model (dmmodel.py)
 The user must define a DM interaction model (as a function of recoil energy) by creating a new "DMModel" object which requires definition of a minimum velocity (in units of km/s) and a differential cross section (in units of cm2/eV). These will both (probably) be a function of target objects which will be read in as an argument for the functions.
@@ -19,6 +19,7 @@ The current models are available (see wimp.py):
 
 3. Detector (detector.py)
 A detector object has associated with it some number of targets. The easiest way of doing this is to define the targets separately, then import them into whereever you define your detector. The user needs to define these "Nuclei" as a list, along with the associated transformation between recoil energy and observed energy "ER_R" (e.g., quenching factor, ionisation yield). The energy region of interest (ROI), max energy, resolution functions (DeltaE, Res) and efficiency should all also be defined as a function of observed energy.
+If this is being used with an ER interaction model (i.e., backgrounds), dRdE can be called with the flag NR=False and this will prevent the NR --> observed signal transformations from being applied.
 The current detectors are available:
 - DAMA (nai.py)
 
@@ -26,10 +27,10 @@ The current detectors are available:
 Velocity distributions should be saved as .dat files in the velocity_distributions folder. They should be given as the total velocity integral computed as a function of minimum velocity. These can then be read in with an associated DM density. See the rate_calc document for a more detailed explanation of the format of these distributions, and references to the distributions defined below.
 The current distributions are available:
 - SHM
-- SHM++
-- Shards
-- Streams
-- Lawrence et al. (8 different distributions)
+- SHM++ (https://arxiv.org/abs/1810.11468)
+- Shards (https://arxiv.org/abs/1909.04684)
+- Streams (https://arxiv.org/abs/1807.09004)
+- Lawrence et al. (8 different distributions) (https://arxiv.org/abs/2207.07644)
 
 ### Use
 A basic example of how this code can be used is shown in Demo.ipynb with detectors/models/velocity distributions that already exist. There are a few required steps:
@@ -40,5 +41,5 @@ A basic example of how this code can be used is shown in Demo.ipynb with detecto
 ### To do
 - Test adding detectors with more complex quenching factors
 - Optimise integral in detector rate calc
-- Deal with models that have g and h velocity integrals better
+- ~Deal with models that have g and h velocity integrals better~ Distribution objects now have both h and g integrals that can be called separately when defining model rates
 - Improve final "output" - probably want it to be a function of mX and sig -- add kwargs option or something in det integral??
