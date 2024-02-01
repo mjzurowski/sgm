@@ -25,4 +25,4 @@ class VelDist:
         Interpolate given data to find the integral value for the min velocity vm
         h integral files are typically given in units of [km/s] but we require our values to be unitless so include appropriate c factors
         """
-        return np.interp(vm,self.gfile[:,0],self.gfile[:,1],right=0)/(c*1E-3)
+        return np.interp(vm,self.hfile[:,0],self.hfile[:,1],right=0)/(c*1E-3)
