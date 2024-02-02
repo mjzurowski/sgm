@@ -260,20 +260,20 @@ class Target(ABC):
         pass
 
     @abstractmethod
-    def eTransEM(self):
+    def eTransE_E(self):
         """
-        Files that give electron transition probability as a function of total electronic energy (E_EM = electron energy + nuclear bonding)
+        Files that give electron transition probability as a function of the kinetic energy of the emitted electron E_e (E_e = E_EM - nuclear bonding)
         Note that targets will have multiple of these depending on the transition energies allowed
         These should have units of [eV]^-1 and be passed as a list the same length as eNL
         """
         pass
 
-    def eTrans(self,E_E):
+    def eTrans(self,E_EM):
         """
-        Electron transition probability as a function of electron kinetic energy (i.e., what will be observed in a detector). Transforms eTransEM based on the transition energies
+        Electron transition probability as a function of total electronic energy seen in the detector (E_EM = electron kinetic energy + nuclear bonding). Transforms eTransE_E based on the transition energies
         Should still be a list of the same length (and in units of [eV]^-1) as it later needs to be paired with appropriate vmins
         """
         trans_list = []
         for i in range(0,len(self.eNL)):
-            trans_list.append(np.interp(E_E-self.eNL[i],self.eTransEM[i][:,0],self.eTransEM[i][:,1])*np.heaviside(E_E-self.eNL[i],1))
+            trans_list.append(np.interp(E_EM-self.eNL[i],self.eTransE_E[i][:,0],self.eTransE_E[i][:,1])*np.heaviside(E_EM-self.eNL[i],1))
         return trans_list
