@@ -99,7 +99,7 @@ class I(Target):
     def eNL(self):
         return [3.3E4,5.1E3,4.6E3,1.0E3,8.7E2,6.1E2,1.8E2,1.3E2,5.1E1,1.9E1,8.8]
 
-    def eTransEM(self):
+    def eTransE_E(self):
         return [i_10,i_20,i_21,i_30,i_31,i_32,i_40,i_41,i_42,i_50,i_51]
 
     
