@@ -35,7 +35,7 @@ class MIGDAL(DMModel):
         [sig] = [cm]^2 cross section
         [EE]  = [eV] Ionization energy (Electron + Binding)
 
-        Output units: [cm^2]/[eV] 
+        Output units: [cm^2]/[eV]  - This gives the rate for all of the relevant transitions. A sum accross each entry will provide the total rate.
         """
         FF = Target.Helm(ER)**2
 
@@ -45,17 +45,6 @@ class MIGDAL(DMModel):
         vmins = self.vmin(Target, mX, ER, EE)        
         gdists = VelDist.gdist(vmins) # Similarly taking and evaluating for the relevant vmin.
         probs  = Target.eTrans(EE)
-
-        # print('vmin', vmins)
-        # print('gdist', gdists)
-        # print('prob', probs)
-
-
-        # summed_contribution = np.sum(gdists*probs)
-        
-        # print(summed_contribution)
-
-
 
         return prefac*np.array(gdists*probs)
 
