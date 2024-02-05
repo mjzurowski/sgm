@@ -274,6 +274,6 @@ class Target(ABC):
         Should still be a list of the same length (and in units of [eV]^-1) as it later needs to be paired with appropriate vmins
         """
         trans_list = []
-        for i in range(0,len(self.eNL)):
-            trans_list.append(np.interp(E_E-self.eNL[i],self.eTransEM[i][:,0],self.eTransEM[i][:,1])*np.heaviside(E_E-self.eNL[i],1))
+        for i in range(0,len(self.eNL())):
+            trans_list.append(np.interp(E_E-self.eNL()[i],self.eTransEM()[i][:,0],self.eTransEM()[i][:,1])*np.heaviside(E_E-self.eNL()[i],1))
         return trans_list

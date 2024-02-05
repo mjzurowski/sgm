@@ -13,7 +13,7 @@ class DMModel(ABC):
         pass
 
     @abstractmethod
-    def dRdER(self,Target,mX,ER,sig,VelDist):
+    def dRdER(self,Target,mX,ER,sig,VelDist, EE = 0):
         """
         Interaction rate as a function of recoil energy in counts/[day]/[kg]/[keV]
         Inputs:
@@ -24,5 +24,4 @@ class DMModel(ABC):
             dist: velocity distribution [unitless]
         """
         pass
-
-
+    
