@@ -37,10 +37,11 @@ class MIGDAL(DMModel):
 
         Output units: [cm^2]/[eV] 
         """
-        FF = Target.Helm(ER)
-        PreFactor = (sig)*(VelDist.rho)*(Target.mT()**2)*FF/(2*mX*Target.mu_N(mX)**2)
+        FF = Target.Helm(ER)**2
+
+        dsigdER = (1/kg_to_eV)*sig*FF*Target.A()**2 / (2*Target.N_T()*Target.mu_N(mX)**2) ## units of [cm^2]/[eV]
+        prefac = cpd_conversion*Target.N_T()*dsigdER*VelDist.rho/mX
         
-        # vmins  = [vmin for vmin in self.vmin(Target, ER, mX, EE)] # These will give an array of vmins for the given EE and Transition energies in the target.
         vmins = self.vmin(Target, mX, ER, EE)        
         gdists = VelDist.gdist(vmins) # Similarly taking and evaluating for the relevant vmin.
         probs  = Target.eTrans(EE)
@@ -50,13 +51,13 @@ class MIGDAL(DMModel):
         # print('prob', probs)
 
 
-        summed_contribution = np.sum(gdists*probs)
+        # summed_contribution = np.sum(gdists*probs)
         
         # print(summed_contribution)
 
 
 
-        return cpd_conversion*PreFactor*np.array(summed_contribution)
+        return prefac*np.array(gdists*probs)
 
 
 """ Requre the addition of both a probability calculation and ionization rate calculation."""
