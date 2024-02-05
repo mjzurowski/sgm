@@ -1,5 +1,6 @@
 eV = 1 # base mass units
 keV = 1E3 
+MeV = 1E6
 GeV = 1E9
 
 c = 299792458. # speed of light [km/s]
