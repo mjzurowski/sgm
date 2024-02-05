@@ -15,7 +15,7 @@ class SIWIMP(DMModel):
        """
        return (c*1.E-3)*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,mX,ER,sig,VelDist):
+    def dRdER(self,Target,ER,mX,sig,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -45,7 +45,7 @@ class SIWIMP_Helm(DMModel):
        """
        return (c*1.E-3)*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,mX,ER,sig,VelDist):
+    def dRdER(self,Target,ER,mX,sig,VelDist):
         """
         For this model, we take the Helm Form Factor rather than those defined from nrefts. Note that it should be ~ equal to the O1 SIWIMP
         [mX] = [eV] DM mass

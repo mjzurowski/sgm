@@ -41,7 +41,7 @@ class Detector(ABC):
         """
         pass
 
-    def dRdE_True(self,Func,E,NR=True):
+    def dRdE_True(self,E,Func,NR=True,**kwargs):
         """
         Rate as a function of observed energy
         Assume "Func" object is something like a background or signal model that is a function of E and target. (NB background will probably be independent of target so it will be a useless variable there)
@@ -56,11 +56,11 @@ class Detector(ABC):
                 ER = self.ER_E(E)[i] # energy conversion for this nucleus
                 T = self.Nuclei()[i] # target object for computing DM rate
                 dERdE = self.dERdE(E)[i]
-                TotalRate+=dERdE*float(Func(T,ER))*T.mT()/self.DetMass()
+                TotalRate+=dERdE*float(Func(T,ER,**kwargs))*T.mT()/self.DetMass()
         else:
             for i in range(0,len(self.Nuclei())):
                 T = self.Nuclei()[i] # target object for computing DM rate
-                TotalRate+=float(Func(T,ER))*T.mT()/self.DetMass()
+                TotalRate+=float(Func(T,ER,**kwargs))*T.mT()/self.DetMass()
         return TotalRate
 
 ### General detector terms
@@ -99,12 +99,12 @@ class Detector(ABC):
         """
         pass
 
-    def dRdE(self,Model,E,NR=True):
+    def dRdE(self,E,Model,NR=True,**kwargs):
         """
         Observed rate for Model object smeared with resolution
         NR is a flag (default set true) that allows you to turn on and off nuclear recoil vs electron recoil (which will have different conversion factors to observed energy)
         """
-        integral = integrate.quad(lambda E2: self.dRdE_True(Model,E2,NR)*self.Res(E,E2),0,2*self.Emax(),points=self.ROI(),limit=int(1E8))[0] ## this integral could probs be optimised
+        integral = integrate.quad(lambda E2: self.dRdE_True(E2,Model,NR,**kwargs)*self.Res(E,E2),0,2*self.Emax(),points=self.ROI(),limit=int(1E8))[0] ## this integral could probs be optimised
         return integral*self.Eff(E)
 
 

@@ -35,11 +35,10 @@ The current distributions are available:
 ### Use
 A basic example of how this code can be used is shown in Demo.ipynb with detectors/models/velocity distributions that already exist. There are a few required steps:
 1. Initialise your detector, model, and velocity distribution.
-2. Choose a particular DM mass and cross section, and use these to define a DM interaction rate as a function of target (T) and recoil energy (E) for the Model in use with Model.dRdER.
-3. Compute this rate as a function of observed energy for the detector by passing it as an argument in Det.dRdR.
+2. Call Det.dRdE, which will calculate the rate observed in the detector. This takes as variables the energy, the model (Model.dRdER) and the DM parameters the model requires, passed as kwargs (e.g., mass, cross section, velocity distribution etc)
 
 ### To do
 - Test adding detectors with more complex quenching factors
 - Optimise integral in detector rate calc
 - ~Deal with models that have g and h velocity integrals better~ Distribution objects now have both h and g integrals that can be called separately when defining model rates
-- Improve final "output" - probably want it to be a function of mX and sig -- add kwargs option or something in det integral??
+- ~Improve final "output" - probably want it to be a function of mX and sig~ Added kwargs to the detector functions to allow more generic rate forms/variables to be passed directly to Det.dRdE
