@@ -13,9 +13,10 @@ The current targets are available:
 
 2. DM model (dmmodel.py)
 The user must define a DM interaction model (as a function of recoil energy) by creating a new "DMModel" object which requires definition of a minimum velocity (in units of km/s) and a differential cross section (in units of cm2/eV). These will both (probably) be a function of target objects which will be read in as an argument for the functions.
-The current models are available (see wimp.py):
+The current models are available (see models/):
 - Standard SI WIMP (computed using Helm form factor)
 - NREFT WIMP defined with operators O1, O4, O5, O6, O7.
+- SI inelastic WIMP (an example of a model that has requires additional variables)
 
 3. Detector (detector.py)
 A detector object has associated with it some number of targets. The easiest way of doing this is to define the targets separately, then import them into whereever you define your detector. The user needs to define these "Nuclei" as a list, along with the associated transformation between recoil energy and observed energy "ER_R" (e.g., quenching factor, ionisation yield). The energy region of interest (ROI), max energy, resolution functions (DeltaE, Res) and efficiency should all also be defined as a function of observed energy.
