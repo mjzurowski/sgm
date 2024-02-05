@@ -277,3 +277,13 @@ class Target(ABC):
         for i in range(0,len(self.eNL())):
             trans_list.append(np.interp(E_E-self.eNL()[i],self.eTransEM()[i][:,0],self.eTransEM()[i][:,1])*np.heaviside(E_E-self.eNL()[i],1))
         return trans_list
+    
+    def eProbs(self,E_E):
+        """
+        Electron transition probability as a function of electron kinetic energy (i.e., what will be observed in a detector). Transforms eTransEM based on the transition energies
+        Should still be a list of the same length (and in units of [eV]^-1) as it later needs to be paired with appropriate vmins
+        """
+        trans_list = []
+        for i in range(0,len(self.eNL())):
+            trans_list.append(np.interp(E_E-self.eNL()[i],self.eTransEM()[i][:,0],self.eTransEM()[i][:,1]))
+        return trans_list
