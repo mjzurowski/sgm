@@ -20,9 +20,15 @@ class MIGDAL(DMModel):
         
         vmins = [] # VMIN is returned as a list based on the transition energies in the target.
         for Eb in Target.eNL():
-            vmins.append(c*1e-3*(Target.mT()*ER+Target.mu_T(mX)*(-1*Eb+EE))/(Target.mu_T(mX)*np.power(2*Target.mT()*ER,0.5)))
+            vmins.append(c*1e-3*(Target.mT()*ER+Target.mu_T(mX)*(Eb+EE))/(Target.mu_T(mX)*np.power(2*Target.mT()*ER,0.5)))
         
         return vmins
+    
+    def vmin2(self, Target, mX, ER, EE):
+        vmins = [] # VMIN is returned as a list based on the transition energies in the target.
+        for Eb in Target.eNL():
+            vmins.append(c*1e-3*(pow(Target.mT()*ER/2*Target.mu_T(mX),0.5) + (Eb+EE)/pow(2*Target.mT()*ER,0.5)))
+        return vmins        
     
  
     def dRdER(self, Target, mX, ER, sig, VelDist, EE):
@@ -57,7 +63,8 @@ class MIGDAL(DMModel):
 
 
 
-        return prefac*np.array(gdists*probs)
+        # return prefac*np.array(gdists*probs)
+        return (prefac*np.array(gdists*probs), vmins, gdists, probs)
 
 
 """ Requre the addition of both a probability calculation and ionization rate calculation."""
