@@ -3,7 +3,7 @@ from constants import *
 
 class DMModel(ABC):
     @abstractmethod
-    def vmin(self,Target,mX,ER):
+    def vmin(self,Target,mX,ER,**kwargs):
         """
         Minimum velocity that can produce recoil energy ER in [km/s]
         Target: target nucleus
@@ -13,7 +13,7 @@ class DMModel(ABC):
         pass
 
     @abstractmethod
-    def dRdER(self,Target,mX,ER,sig,VelDist):
+    def dRdER(self,Target,ER,mX,sig,VelDist,**kwargs):
         """
         Interaction rate as a function of recoil energy in counts/[day]/[kg]/[keV]
         Inputs:

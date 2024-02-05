@@ -93,5 +93,5 @@ class Na(Target):
     def eNL(self):
         return [1.1E3,6.6E1,3.9E1,6.1]
 
-    def eTransEM(self):
+    def eTransE_E(self):
         return [n_10,n_20,n_21,n_30]
