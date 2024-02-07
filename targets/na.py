@@ -8,6 +8,8 @@ n_20 = np.loadtxt("./targets/elec_prob/na_nl20.dat")
 n_21 = np.loadtxt("./targets/elec_prob/na_nl21.dat")
 n_30 = np.loadtxt("./targets/elec_prob/na_nl30.dat")
 
+na_pe = np.loadtxt("./targets/pe_abs/na_pe.dat")
+
 #### Define target functions
 
 class Na(Target):
@@ -95,3 +97,6 @@ class Na(Target):
 
     def eTransE_E(self):
         return [n_10,n_20,n_21,n_30]
+    
+    def sigma_PE(self,E_gam):
+        return np.interp(E_gam,na_pe[:,0],na_pe[:,1])

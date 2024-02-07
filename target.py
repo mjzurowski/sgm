@@ -3,6 +3,7 @@ import numpy as np
 from constants import *
 
 #### Fundamental properties of a target that won't change between detectors (e.g., mass, form factors)
+##### Note that a lot of these functions depend on additional data. These are included in subfolders in targets/, where info.txt files can be found that give detail on their units and source
 
 class Target(ABC):
     def spin_dep(self, jx):
@@ -57,83 +58,63 @@ class Target(ABC):
         """
         return np.power((1/(197.327 *1E6))*self.Q(ER)*self.B()/2.,2.)
     
-    @abstractmethod
     def FMpp(self,ER):
         pass
 
-    @abstractmethod
     def FMnp(self,ER):
         pass
 
-    @abstractmethod
     def FMpn(self,ER):
         pass
 
-    @abstractmethod
     def FMnn(self,ER):
         pass
 
-    @abstractmethod
     def FS1pp(self,ER):
         pass
 
-    @abstractmethod
     def FS1np(self,ER):
         pass
 
-    @abstractmethod
     def FS1pn(self,ER):
         pass
 
-    @abstractmethod
     def FS1nn(self,ER):
         pass
 
-    @abstractmethod
     def FS2pp(self,ER):
         pass
 
-    @abstractmethod
     def FS2np(self,ER):
         pass
 
-    @abstractmethod
     def FS2pn(self,ER):
         pass
 
-    @abstractmethod
     def FS2nn(self,ER):
         pass
 
-    @abstractmethod
     def FDpp(self,ER):
         pass
 
-    @abstractmethod
     def FDnp(self,ER):
         pass
 
-    @abstractmethod
     def FDpn(self,ER):
         pass
 
-    @abstractmethod
     def FDnn(self,ER):
         pass
 
-    @abstractmethod
     def FS1Dpp(self,ER):
         pass
 
-    @abstractmethod
     def FS1Dnp(self,ER):
         pass
 
-    @abstractmethod
     def FS1Dpn(self,ER):
         pass
 
-    @abstractmethod
     def FS1Dnn(self,ER):
         pass
 
@@ -251,7 +232,7 @@ class Target(ABC):
         n_n = cn4*cn6*self.FS2nn(ER)
         return self.spin_dep(jx)*np.power(self.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)/8
     
-    @abstractmethod
+##### Electron transition probs
     def eNL(self):
         """
         List of transition energies for the target
@@ -259,7 +240,6 @@ class Target(ABC):
         """
         pass
 
-    @abstractmethod
     def eTransE_E(self):
         """
         Files that give electron transition probability as a function of the kinetic energy of the emitted electron E_e (E_e = E_EM - nuclear bonding)
@@ -277,3 +257,11 @@ class Target(ABC):
         for i in range(0,len(self.eNL)):
             trans_list.append(np.interp(E_EM-self.eNL[i],self.eTransE_E[i][:,0],self.eTransE_E[i][:,1])*np.heaviside(E_EM-self.eNL[i],1))
         return trans_list
+    
+##### Photoelectric absorption
+    def sigma_PE(self,E_gam):
+        """
+        Photoelectric absorption as a function of photon energy (E_gam) [eV]
+        Output units are [cm2/atom]
+        """
+        pass

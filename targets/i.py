@@ -14,6 +14,8 @@ i_42 = np.loadtxt("./targets/elec_prob/i_nl42.dat")
 i_50 = np.loadtxt("./targets/elec_prob/i_nl50.dat")
 i_51 = np.loadtxt("./targets/elec_prob/i_nl51.dat")
 
+i_pe = np.loadtxt("./targets/pe_abs/i_pe.dat")
+
 ##### Define target functions
 
 class I(Target):
@@ -101,5 +103,8 @@ class I(Target):
 
     def eTransE_E(self):
         return [i_10,i_20,i_21,i_30,i_31,i_32,i_40,i_41,i_42,i_50,i_51]
+    
+    def sigma_PE(self,E_gam):
+        return np.interp(E_gam,i_pe[:,0],i_pe[:,1])
 
     
