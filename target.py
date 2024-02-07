@@ -15,6 +15,12 @@ class Target(ABC):
         """
         pass
 
+    def Z(self):
+        """
+        Atomic number of target [unitless]
+        """
+        pass
+
     def N_T(self):
         """
         Target density [atoms/kg]

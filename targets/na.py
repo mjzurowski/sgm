@@ -14,6 +14,9 @@ class Na(Target):
     def A(self):
         return 23
 
+    def Z(self):
+        return 11
+
     def FMpp(self,ER):
         y = self.Y(ER)
         return np.exp(-2.*y)*(120.-180.*y+87.*np.power(y,2.)-17.*np.power(y,3.)+1.2*np.power(y,4.))
@@ -93,5 +96,5 @@ class Na(Target):
     def eNL(self):
         return [1.1E3,6.6E1,3.9E1,6.1]
 
-    def eTransEM(self):
+    def eTransE_E(self):
         return [n_10,n_20,n_21,n_30]

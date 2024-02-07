@@ -20,6 +20,9 @@ class I(Target):
     def A(self):
         return 127
 
+    def Z(self):
+        return 53
+
     def FMpp(self,ER):
         y = self.Y(ER)
         return np.exp(-2.*y)*(2800.-10000.*y+14000.*pow(y,2.)-9800.*pow(y,3.)+3800.*pow(y,4.)-840.*pow(y,5.)+100.*pow(y,6.)-6.3*pow(y,7.)+0.15*pow(y,8.))
@@ -99,7 +102,7 @@ class I(Target):
     def eNL(self):
         return [3.3E4,5.1E3,4.6E3,1.0E3,8.7E2,6.1E2,1.8E2,1.3E2,5.1E1,1.9E1,8.8]
 
-    def eTransEM(self):
+    def eTransE_E(self):
         return [i_10,i_20,i_21,i_30,i_31,i_32,i_40,i_41,i_42,i_50,i_51]
 
     
