@@ -6,7 +6,7 @@ Further details about how the calculation is performed can be found in the pdf d
 The calculation is performed using a number of user defined objects:
 
 1. Target (target.py)
-A target is a nucleus able to undergo scattering. It should be defined with its mass number, nuclear form factors, and electron transition probabilities.
+A target is a nucleus able to undergo scattering. It should be defined with its mass number, nuclear form factors, electron transition probabilities, photoelectric absorption.
 The current targets are available:
 - Na (na.py)
 - I (i.py)
@@ -21,8 +21,9 @@ The current models are available (see models/):
 3. Detector (detector.py)
 A detector object has associated with it some number of targets. The easiest way of doing this is to define the targets separately, then import them into whereever you define your detector. The user needs to define these "Nuclei" as a list, along with the associated transformation between recoil energy and observed energy "ER_R" (e.g., quenching factor, ionisation yield). The energy region of interest (ROI), max energy, resolution functions (DeltaE, Res) and efficiency should all also be defined as a function of observed energy.
 If this is being used with an ER interaction model (i.e., backgrounds), dRdE can be called with the flag NR=False and this will prevent the NR --> observed signal transformations from being applied.
-The current detectors are available:
-- DAMA (nai.py)
+The current detectors are available (see detectors/):
+- DAMA (dama.py)
+- COSINE (cosine.py)
 
 4. Velocity distribution (veldists.py)
 Velocity distributions should be saved as .dat files in the velocity_distributions folder. They should be given as the total velocity integral computed as a function of minimum velocity. These can then be read in with an associated DM density. See the rate_calc document for a more detailed explanation of the format of these distributions, and references to the distributions defined below.
@@ -39,7 +40,7 @@ A basic example of how this code can be used is shown in Demo.ipynb with detecto
 2. Call Det.dRdE, which will calculate the rate observed in the detector. This takes as variables the energy, the model (Model.dRdER) and the DM parameters the model requires, passed as kwargs (e.g., mass, cross section, velocity distribution etc)
 
 ### To do
-- Test adding detectors with more complex quenching factors
+- ~Test adding detectors with more complex quenching factors~ Added using simple interpolation rather than fitting to a proper model
 - Optimise integral in detector rate calc
 - ~Deal with models that have g and h velocity integrals better~ Distribution objects now have both h and g integrals that can be called separately when defining model rates
 - ~Improve final "output" - probably want it to be a function of mX and sig~ Added kwargs to the detector functions to allow more generic rate forms/variables to be passed directly to Det.dRdE
