@@ -60,7 +60,7 @@ class Detector(ABC):
         else:
             for i in range(0,len(self.Nuclei())):
                 T = self.Nuclei()[i] # target object for computing DM rate
-                TotalRate+=float(Func(T,ER,**kwargs))*T.mT()/self.DetMass()
+                TotalRate+=float(Func(T,E,**kwargs))*T.mT()/self.DetMass()
         return TotalRate
 
 ### General detector terms
