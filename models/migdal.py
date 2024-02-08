@@ -43,21 +43,21 @@ class MIGDAL(DMModel):
             # units of [cm^2]/[eV]
         prefac = cpd_conversion*Target.N_T()*dsigdER*VelDist.rho/mX
 
-        vmins = self.vmin(Target, mX, ER, EM) # [km/s]       
-        gdists = VelDist.gdist(vmins) # Similarly taking and evaluating for the relevant vmin. [unitless]
-        probs  = np.array(Target.eTrans((EM))) # [unitless]
+        vmins = self.vmin(Target, mX, ER, EM)   # [km/s]       
+        gdists = VelDist.gdist(vmins)           # Similarly taking and evaluating for the relevant vmin. [unitless]
+        probs  = np.array(Target.eTrans((EM)))  # [unitless]
 
         # return prefac*np.array(gdists*probs)
         return np.sum(prefac*np.array(gdists*probs))
         # return (prefac*np.array(gdists*probs), vmins, gdists, probs)
 
 
-    def dRdER(self, Target, E, mX, sig, VelDist, ):
+    def dRdER(self, Target, E, mX, sig, VelDist, ERlim = 2*keV):
         return integrate.quad(lambda ER: self.dR2dEREE(Target, 
                                                         mX, 
                                                         ER, 
                                                         sig, 
                                                         VelDist,
-                                                        EM=E), 0, np.inf)[0]
+                                                        EM=E), 0, ERlim)[0]
 
 """ Requre the addition of both a probability calculation and ionization rate calculation."""

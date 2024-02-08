@@ -104,7 +104,10 @@ class Detector(ABC):
         Observed rate for Model object smeared with resolution
         NR is a flag (default set true) that allows you to turn on and off nuclear recoil vs electron recoil (which will have different conversion factors to observed energy)
         """
-        integral = integrate.quad(lambda E2: self.dRdE_True(E2,Model,NR,**kwargs)*self.Res(E,E2),0,2*self.Emax(),points=self.ROI(),limit=int(1E8))[0] ## this integral could probs be optimised
+        integral = integrate.quad(lambda E2: self.dRdE_True(E2,Model,NR,**kwargs)*self.Res(E,E2),
+                                  0,
+                                  2*self.Emax(),
+                                  points=self.ROI(),limit=int(1E8))[0] ## this integral could probs be optimised
         return integral*self.Eff(E)
 
 
