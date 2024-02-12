@@ -6,7 +6,7 @@ Further details about how the calculation is performed can be found in the pdf d
 The calculation is performed using a number of user defined objects:
 
 1. Target (target.py)
-A target is a nucleus able to undergo scattering. It should be defined with its mass number, nuclear form factors, electron transition probabilities, photoelectric absorption.
+A target is a nucleus able to undergo scattering. It should be defined with its mass number, nuclear form factors, electron transition probabilities, photoelectric absorption. Nuclear form factors are assumed to be defined in the same form as in Fitzpatrick et al. (https://arxiv.org/abs/1203.3542)
 The current targets are available:
 - Na (na.py)
 - I (i.py)
@@ -15,7 +15,7 @@ The current targets are available:
 The user must define a DM interaction model (as a function of recoil energy) by creating a new "DMModel" object which requires definition of a minimum velocity (in units of km/s) and a differential cross section (in units of cm2/eV). These will both (probably) be a function of target objects which will be read in as an argument for the functions.
 The current models are available (see models/):
 - Standard SI WIMP (computed using Helm form factor)
-- NREFT WIMP defined with operators O1, O4, O5, O6, O7.
+- NREFT WIMP defined with operators O1, O4, O5, O6, O7 (see appendix A.3 of https://arxiv.org/abs/1203.3542).
 - SI inelastic WIMP (an example of a model that has requires additional variables)
 
 3. Detector (detector.py)

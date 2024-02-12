@@ -31,6 +31,7 @@ class COSINE(Detector):
         return (0.3171*pow(E,0.5))+(0.008189*E)
     
     def Res(self,E1,E2):
+        # We assume E1 is the observed energy (E' in accompanying documentation) and E2 is the energy that will be integrated over (E_ee in accompanying documentation)
         A = 1./(np.sqrt(2.*np.pi)*self.DeltaE(E2))
         return A*np.exp(-0.5*pow((E1 - E2)/self.DeltaE(E2), 2.))
     

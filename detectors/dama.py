@@ -9,8 +9,6 @@ class DAMA(Detector):
         return [Na(),I()]
     
     def ER_E(self,E):
-        ### This function will ultimately need some way to distinguish between NR and ER
-        ### For now can just avoid that by creating a separate background spec
         """
         [E] = [keV_0] Observed energy keV
 
@@ -31,6 +29,7 @@ class DAMA(Detector):
         return (0.488*pow(E,0.5))+(0.0091*E)
     
     def Res(self,E1,E2):
+        # We assume E1 is the observed energy (E' in accompanying documentation) and E2 is the energy that will be integrated over (E_ee in accompanying documentation)
         A = 1./(np.sqrt(2.*np.pi)*self.DeltaE(E2))
         return A*np.exp(-0.5*pow((E1 - E2)/self.DeltaE(E2), 2.))
     

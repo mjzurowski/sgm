@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import scipy as sp
+import numpy as np
 import scipy.integrate as integrate
 
 class Detector(ABC):
@@ -49,6 +50,7 @@ class Detector(ABC):
         """ 
         if len(self.ER_E(E))!=len(self.Nuclei()):
             print("You haven't identified an energy transformation for all the target nuclei.")
+            return 0
             ## add some kind of system exit function.
         TotalRate = 0
         if NR:
@@ -96,6 +98,7 @@ class Detector(ABC):
     def Res(self,E1,E2):
         """
         Resolution smearing function (probably a gaussian but lets leave arbitrary for now...)
+        We assume E1 is the observed energy (E' in accompanying documentation) and E2 is the energy that will be integrated over (E_ee in accompanying documentation)
         """
         pass
 
@@ -104,8 +107,8 @@ class Detector(ABC):
         Observed rate for Model object smeared with resolution
         NR is a flag (default set true) that allows you to turn on and off nuclear recoil vs electron recoil (which will have different conversion factors to observed energy)
         """
-        integral = integrate.quad(lambda E2: self.dRdE_True(E2,Model,NR,**kwargs)*self.Res(E,E2),0,2*self.Emax(),points=self.ROI(),limit=int(1E8))[0] ## this integral could probs be optimised
-        return integral*self.Eff(E)
-
+        energy_arr = np.arange(0.01,2*self.Emax(),0.1)
+        rate_arr = [self.dRdE_True(E2,Model,NR,**kwargs)*self.Res(E,E2) for E2 in energy_arr]
+        return integrate.trapz(rate_arr,energy_arr)
 
     
