@@ -41,6 +41,6 @@ A basic example of how this code can be used is shown in Demo.ipynb with detecto
 
 ### To do
 - ~Test adding detectors with more complex quenching factors~ Added using simple interpolation rather than fitting to a proper model
-- Optimise integral in detector rate calc
+- ~Optimise integral in detector rate calc~ Sped up a little (and made integral more accurate) by using trapz instead, but this is still not as quick as I'd like
 - ~Deal with models that have g and h velocity integrals better~ Distribution objects now have both h and g integrals that can be called separately when defining model rates
 - ~Improve final "output" - probably want it to be a function of mX and sig~ Added kwargs to the detector functions to allow more generic rate forms/variables to be passed directly to Det.dRdE
