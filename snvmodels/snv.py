@@ -13,24 +13,25 @@ class SNv(SNvModel):
         Calculate neutrino flux at the detector from the supernova.
     
         Parameters:
-        - Ev: Energy of neutrinos
-        - L: Distance from the supernova to the detector (Earth)
+        - Ev: Energy of neutrinos [eV]
+	- flavor: e for electron neutrino, ea for electron anti-neutrino, x for the rest
+        - L: Distance from the supernova to the detector (Earth) [cm]
         - Ni: The number of emitted neutrinos for flavor i, data from https://www.sciencedirect.com/science/article/pii/S0927650512001132
         - Ti: The temperature of emitted neutrinos for flavor i
     
         Returns:
-        - phi(E)
+        - phi(E) in [cm-2eV-1]
         """
         L = 3.086e+22 #10 kpc [cm]
         if flavor == 'e':
             Ni = 3e57
-            T = 3.5e3
+            T = 3.5*MeV
         elif flavor == 'ea':
             Ni = 2.1e57
-            T = 5e3 
+            T = 5*MeV 
         elif flavor == 'x':
             Ni = 5.2e57
-            T = 8e3 
+            T = 8*MeV 
         else:
             print("Please choose the right flavor of neutrinos. Options are 'e' for electron neutrino, 'ea' for electron antineutrino and 'x' for the rest.")
         
@@ -42,21 +43,22 @@ class SNv(SNvModel):
        [mX] = [eV] DM mass
        [ER] = [eV] DM recoil energy
 
-       Output units: [km/s]
+       Output units: [eV]
        """
-       return np.sqrt(ER*Target.mT()*1e-3/2)
+       return np.sqrt(ER*Target.mT()/2)
 
     def Sig(self,Target,Ev,ER):
         """
-        Differential cross section as a function of recoil energy ER in [KeV]
+        Differential cross section as a function of recoil energy ER in [eV]
         Target: target nucleus
         mX: DM mass [eV]
         ER: recoil energy [eV]
+        Sig: cross section [cm2/eV]
         """
         Gf = 1.166364*1e-5 ##Fermi constant in natural unit GeV
         sin2thetaW = 0.2229 ## Weak mixing angle from https://physics.nist.gov/cgi-bin/cuu/Value?sin2th
-        FF = Target.Helm(ER*1e3)**2 ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
-        cross_sec = Gf**2*Target.mT()*1e-9/(8*np.pi)*(Target.Z()*(4*sin2thetaW-1)+(Target.A()-Target.Z()))**2*(2-ER*Target.mT()*1e-3/Ev**2)*FF*0.389379*1e-27/1e6 ##cm2/keV
+        FF = Target.Helm(ER)**2 ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
+        cross_sec = Gf**2*Target.mT()*1e-9/(8*np.pi)*(Target.Z()*(4*sin2thetaW-1)+(Target.A()-Target.Z()))**2*(2-ER*Target.mT()/Ev**2)*FF*0.389379*1e-27/1e9 #cm2/eV
         return cross_sec
             
     
@@ -65,7 +67,7 @@ class SNv(SNvModel):
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
         [ER] = [eV] DM recoil energy
-        [sig] = [cm]^2 cross section
+        [sig] = [cm2/eV] cross section
 
         Output units: [cm^2]/[eV] 
         """

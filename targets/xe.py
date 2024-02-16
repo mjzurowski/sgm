@@ -6,12 +6,12 @@ import numpy as np
 
 #### Define target functions
 
-class Si(Target):
+class Xe(Target):
     def A(self):
-        return 28
+        return 131
 
     def Z(self):
-        return 14
+        return 54
 
     def FMpp(self,ER):
         pass
