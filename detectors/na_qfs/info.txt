@@ -1,9 +1,0 @@
-This folder houses different data that can be used to construct Na QF expressions
-Data is of the form
-Electron equiavlent energy [keV_ee]   Recoil energy [keV_NR]
-It has been derived by computing the E_ee from the QFs in data from (and stored under the name):
-- Xu: https://arxiv.org/abs/1503.07212
-- Stiegler: https://arxiv.org/pdf/1706.07494.pdf 
-- Bignell: https://iopscience.iop.org/article/10.1088/1748-0221/16/07/P07034 
-- Joo: https://arxiv.org/abs/1809.10310 
-- Cintas: https://iopscience.iop.org/article/10.1088/1742-6596/2156/1/012065/meta 
