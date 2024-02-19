@@ -1,5 +1,0 @@
-These files give electron transition probability as a function of the kinetic energy of the emitted electron E_e (E_e = E_EM - nuclear bonding) 
-(i.e., the probablitity that an electron with energy E_e will be released). They are taken from the ancillary files from https://arxiv.org/abs/1707.07258
-Note that targets will have multiple of these depending on the transition energies allowed
-They are of the form
-Kinetic energy [eV] Probability of emission [/eV]

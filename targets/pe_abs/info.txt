@@ -1,4 +1,0 @@
-Photoelectric absorption as a function of photon energy. 
-Info is taken from NIST: https://physics.nist.gov/PhysRefData/Xcom/html/xcom1.html
-Data is in the form of 
-Photon energy [eV]  Absoprtion [cm2/atom]
