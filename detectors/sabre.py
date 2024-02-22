@@ -14,9 +14,6 @@ class SABRE(Detector):
     def dERdE(self, E):
         return [1. / 0.3, 1. / 0.09]
     
-    def ROI(self):
-        return [1., 6.]
-    
     def Emax(self):
         return 20.
     

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import scipy as sp
 import numpy as np
 import scipy.integrate as integrate
+from constants import *
 
 class Detector(ABC):
 ### Target/Nucleus specific terms
@@ -61,18 +62,12 @@ class Detector(ABC):
                 TotalRate+=dERdE*float(Func(T,ER,**kwargs))*T.mT()/self.DetMass()
         else:
             for i in range(0,len(self.Nuclei())):
+                ER = E*keV
                 T = self.Nuclei()[i] # target object for computing DM rate
                 TotalRate+=float(Func(T,ER,**kwargs))*T.mT()/self.DetMass()
         return TotalRate
 
 ### General detector terms
-    @abstractmethod
-    def ROI(self):
-        """
-        Energy region of interest ([keV_0]) to try and help the integral focus
-        """
-        pass
-
     @abstractmethod
     def Emax(self):
         """
@@ -102,12 +97,13 @@ class Detector(ABC):
         """
         pass
 
-    def dRdE(self,E,Model,NR=True,**kwargs):
+    def dRdE(self,E,Model,NR=True,DE=0.01,**kwargs):
         """
         Observed rate for Model object smeared with resolution
         NR is a flag (default set true) that allows you to turn on and off nuclear recoil vs electron recoil (which will have different conversion factors to observed energy)
+        DE is the step size for the energy array used for integration
         """
-        energy_arr = np.arange(0.01,2*self.Emax(),0.1)
+        energy_arr = np.arange(0.01,2*self.Emax(),DE)
         rate_arr = [self.dRdE_True(E2,Model,NR,**kwargs)*self.Res(E,E2) for E2 in energy_arr]
         return integrate.trapz(rate_arr,energy_arr)
 
