@@ -43,22 +43,9 @@ class SNv(NuModel):
         return result   
     
     def Emin(self,Target,ER):
-       """
-       [mX] = [eV] DM mass
-       [ER] = [eV] DM recoil energy
-
-       Output units: [eV]
-       """
        return np.sqrt(ER*Target.mT()/2)
 
-    def Sig(self,Target,Ev,ER):
-        """
-        Differential cross section as a function of recoil energy ER in [eV]
-        Target: target nucleus
-        mX: DM mass [eV]
-        ER: recoil energy [eV]
-        Sig: cross section [cm2/eV]
-        """
+    def Sig(self, Target, Ev, ER):
         Gf = 1.166364*1e-5 ##Fermi constant in natural unit GeV
         sin2thetaW = 0.2229 ## Weak mixing angle from https://physics.nist.gov/cgi-bin/cuu/Value?sin2th
         FF = Target.Helm(ER)**2 ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
@@ -66,15 +53,7 @@ class SNv(NuModel):
         return cross_sec
             
     
-    def dRdER(self,Target,Ev,ER,source):
-        """
-        For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
-        [mX] = [eV] DM mass
-        [ER] = [eV] DM recoil energy
-        [sig] = [cm2/eV] cross section
-
-        Output units: [cm^2]/[eV] 
-        """
+    def dRdER(self, Target, ER, Ev, source):
         # Intergration over neutrino spectrum
         def integrand(Ev,ER,Target,source):
             return Target.N_T() * self.Sig(Target, Ev, ER) * self.Flux_neutrino(Ev,source)
@@ -84,4 +63,4 @@ class SNv(NuModel):
         
         #integral = np.trapz(integrand(Ev,ER)[Ev>self.Emin(Target,ER)],Ev[Ev>self.Emin(Target,ER)])
         #print(integral)
-        return integral
+        return integral * keV
