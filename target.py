@@ -6,6 +6,12 @@ from constants import *
 ##### Note that a lot of these functions depend on additional data. These are included in subfolders in targets/, where info.txt files can be found that give detail on their units and source
 
 class Target(ABC):
+    def __init__(self, quenching_factor=None):
+        self.qf = quenching_factor
+
+    def quenching_factor(self):
+        return self.qf
+
     def spin_dep(self, jx):
         return (4*jx/3)*(jx+1) #### double check this defn as I think it should depend on the target
     
@@ -254,8 +260,8 @@ class Target(ABC):
         Should still be a list of the same length (and in units of [eV]^-1) as it later needs to be paired with appropriate vmins
         """
         trans_list = []
-        for i in range(0,len(self.eNL)):
-            trans_list.append(np.interp(E_EM-self.eNL[i],self.eTransE_E[i][:,0],self.eTransE_E[i][:,1])*np.heaviside(E_EM-self.eNL[i],1))
+        for i in range(0,len(self.eNL())):
+            trans_list.append(np.interp(E_EM - self.eNL()[i], self.eTransE_E()[i][:,0], self.eTransE_E()[i][:,1]) * np.heaviside(E_EM - self.eNL()[i], 1))
         return trans_list
     
 ##### Photoelectric absorption

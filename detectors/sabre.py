@@ -6,13 +6,13 @@ from constants import *
 
 class SABRE(Detector):
     def Nuclei(self):
-        return [Na(), I()]
+        return [Na(quenching_factor=0.3), I(quenching_factor=0.09)]
     
     def ER_E(self, E):
-        return [E * keV / 0.3, E * keV / 0.09]
+        return [E * keV / nucleus.quenching_factor() for nucleus in self.Nuclei()]
     
     def dERdE(self, E):
-        return [1. / 0.3, 1. / 0.09]
+        return [1. / nucleus.quenching_factor() for nucleus in self.Nuclei()]
     
     def Emax(self):
         return 20.
