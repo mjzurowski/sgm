@@ -15,6 +15,9 @@ na_pe = np.loadtxt("./targets/pe_abs/na_pe.dat")
 class Na(Target):
     def A(self):
         return 23
+    
+    def Z(self):
+        return 11
 
     def FMpp(self,ER):
         y = self.Y(ER)

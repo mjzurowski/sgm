@@ -21,6 +21,9 @@ i_pe = np.loadtxt("./targets/pe_abs/i_pe.dat")
 class I(Target):
     def A(self):
         return 127
+    
+    def Z(self):
+        return 53
 
     def FMpp(self,ER):
         y = self.Y(ER)
