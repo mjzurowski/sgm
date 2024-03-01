@@ -69,13 +69,13 @@ class SNv(SNvModel):
         return result   
     
     def Emin(self,Target,ER):
-       """
-       [mX] = [eV] DM mass
-       [ER] = [eV] DM recoil energy
-
-       Output units: [eV]
-       """
-       return np.sqrt(ER*Target.mT()/2)
+        """
+        [mX] = [eV] DM mass
+        [ER] = [eV] DM recoil energy
+        Output units: [eV]
+        """
+        return np.sqrt(ER*Target.mT()/2)
+        #print(((mn+me)**2-mproton**2)/(2*mproton))
 
     def Sig(self,Target,Ev,ER):
         """
@@ -85,6 +85,7 @@ class SNv(SNvModel):
         ER: recoil energy [eV]
         Sig: cross section [cm2/eV]
         """
+        ##CEvNS cross section
         Gf = 1.166364*1e-5 ##Fermi constant in natural unit GeV
         sin2thetaW = 0.2229 ## Weak mixing angle from https://physics.nist.gov/cgi-bin/cuu/Value?sin2th
         FF = Target.Helm(ER)**2 ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
