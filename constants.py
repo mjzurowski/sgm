@@ -12,6 +12,7 @@ Gf = 1.166364*1e-5 ##Fermi constant in natural unit GeV
 sin2thetaW = 0.2229 ## Weak mixing angle from https://physics.nist.gov/cgi-bin/cuu/Value?sin2th
 mproton=938.272*MeV
 mn=939.565*MeV
+mC12=12*mp
 Delta_np = (mn-mproton)
 M_nucleus=(mproton+mn)/2
 me= 0.511*MeV
