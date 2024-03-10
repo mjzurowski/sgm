@@ -1,6 +1,7 @@
 from neutrinomodel import NeutrinoModel
 import numpy as np
 from constants import *
+from targets.c12 import C12
 import scipy.integrate as integrate
 from snvmodels.solarndists import SolarNDist
 import sympy
@@ -125,7 +126,18 @@ class Neutrino(NeutrinoModel):
             def integrand(Ev,e_ave,channel):
                 return NC * Sig(Ev,channel,source)* self.Flux_neutrino(Ev,source, 1,e_ave,3,1)
             Emin=w
-            integral = integrate.quad(lambda Evl:integrand(Evl,E_ave,channel),Emin,max(Ev))[0] 
+            integral = integrate.quad(lambda Evl:integrand(Evl,E_ave,channel),Emin,max(Ev))[0]
+
+        elif channel == 'C12_CEvNS':
+            def Sig(Target,Ev,ER):
+                FF = Target.Helm(ER)**2 ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
+                cross_sec = Gf**2*Target.mT()*1e-9/(8*np.pi)*(Target.Z()*(4*sin2thetaW-1)+(Target.A()-Target.Z()))**2*(2-ER*Target.mT()/Ev**2)*FF*0.389379*1e-27/1e9 #cm2/eV
+                return cross_sec
+            def integrand(Ev,ER,Target,source):
+                return 4.4e28 * Sig(Target, Ev, ER) * self.Flux_neutrino(Ev,source)
+            Target=C12()
+            integral = integrate.quad(lambda Evl:integrand(Evl,Ed,Target,source),np.sqrt(Ed*Target.mT()/2),max(Ev))[0]
+            
         return integral
 
 
