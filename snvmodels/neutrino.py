@@ -76,7 +76,7 @@ class Neutrino(NeutrinoModel):
         NC=4.4e28
         Ne=Np+6*NC
         
-        if channel == "IBD":
+        if channel == "IBD-naive": ##https://arxiv.org/pdf/astro-ph/0302055.pdf
             ##inverse beta decay cross section (IBD) https://arxiv.org/pdf/astro-ph/0302055.pdf
             def Sig(Ev, Eout, channel,source):
                 pep=np.sqrt(Eout**2-me**2)
@@ -88,6 +88,24 @@ class Neutrino(NeutrinoModel):
                 integral = Np * Sig(Ev,Eout,channel,source) * self.Flux_neutrino(Ev,source,1,E_ave,3,1)
             else:
                 integral = 0
+
+        if channel == "IBD-naive+": ##https://arxiv.org/pdf/astro-ph/0302055.pdf
+            ##inverse beta decay cross section (IBD) https://arxiv.org/pdf/astro-ph/0302055.pdf
+            def Sig(Ev, Eout, channel,source):
+                pep=np.sqrt(Eout**2-me**2)
+                #cross_sec = 9.52e-44*(Eout*pep/MeV**2)
+                Ev=Ev/MeV
+                Eout=Eout/MeV
+                pep=pep/MeV
+                cross_sec = 1e-43*Eout*pep*Ev**(-0.07056+0.02018*np.log(Ev)-0.001953*(np.log(Ev))**3)
+                return cross_sec
+            Eout=Ed-me
+            Ev=Eout+Delta_np
+            if Ev > Delta_np+me:
+                integral = Np * Sig(Ev,Eout,channel,source) * self.Flux_neutrino(Ev,source,1,E_ave,3,1)
+            else:
+                integral = 0
+                
                 
         elif channel == "pES":
             def Sig(Ev,Eout,channel,source):
