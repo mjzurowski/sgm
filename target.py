@@ -120,9 +120,10 @@ class Target(ABC):
 
     def Helm(self,ER):
         c1 = 1.23*np.power(self.A(),1/3)-0.6
-        rn = np.power(c1*c1+(7/3)*0.52*0.52*np.pi*np.pi-5*0.9*0.9,0.5) #fm
+        s = 0.9
+        rn = np.power(c1*c1+(7/3)*0.52*0.52*np.pi*np.pi-5*s*s,0.5) #fm
         q = self.Q(ER)/(197.327*1E6) # Q in units of inverse fm
-        return 3*np.exp(-0.5*(0.9*q)**2)*(np.sin(q*rn)-q*rn*np.cos(q*rn))/(np.power(q*rn,3))
+        return 3*np.exp(-0.5*(s*q)**2)*(np.sin(q*rn)-q*rn*np.cos(q*rn))/(np.power(q*rn,3))
 
     ### If we wanted to we could also define the isospin basis either separately or inheriting from these guys
     ### Note that the form factors below are constructed to be called for typical NREFT DM.
