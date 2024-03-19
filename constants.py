@@ -7,7 +7,8 @@ c = 299792458. # speed of light [km/s]
 mp =  0.9314941*GeV # unified atomic mass
 cpd_conversion = 86400*c*1E14 # for conversion of dsigdER to units of cpd/kg/keV
 kg_to_eV = 1.8E-36 # conversion between eV and kg
-kpc_to_cm = 3.086e+21 #1 kpc [cm]
+
+
 
 Gf = 1.166364*1e-5 ##Fermi constant in natural unit GeV
 sin2thetaW = 0.2229 ## Weak mixing angle from https://physics.nist.gov/cgi-bin/cuu/Value?sin2th
@@ -17,5 +18,5 @@ mC12 = 12*mp
 Delta_np = (mn-mproton)
 M_nucleus = (mproton+mn)/2
 me = 0.511*MeV
-
+kpc_to_cm = 3.086e+21 #1 kpc [cm]
 erg = 624.15*GeV
