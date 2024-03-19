@@ -106,6 +106,4 @@ class Detector(ABC):
         """
         integral = integrate.quad(lambda E2: self.dRdE_True(Model,E2,NR)*self.Res(E,E2),0,2*self.Emax(),points=self.ROI(),limit=int(1E8))[0] ## this integral could probs be optimised
         return integral*self.Eff(E)
-
-
     
