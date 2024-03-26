@@ -4,13 +4,15 @@ import numpy as np
 import scipy.integrate as integrate
 from constants import *
 
+import os
+
 def quenching_proton(T):
         weight_H = 1 * (2 * 10+6) / (12 * (6 + 10) + 1 * (2 * 10 + 6))
         weight_C12 = 12 * (6 + 10) / (12 * (6 + 10) + 1 * (2 * 10 + 6))
         density_LAB = 0.859 # [g/cm3]
 
-        eloss_file_H=np.loadtxt('models/neutrinos/p_in_H.dat', skiprows=8)
-        eloss_file_C12=np.loadtxt('models/neutrinos/p_in_C12.dat', skiprows=8)
+        eloss_file_H=np.loadtxt(os.path.join(os.path.dirname(__file__), 'models/neutrinos/p_in_H.dat'), skiprows=8)
+        eloss_file_C12=np.loadtxt(os.path.join(os.path.dirname(__file__), 'models/neutrinos/p_in_C12.dat'), skiprows=8)
         eloss_file_energy = eloss_file_H[:, 0]
         eloss_file_LAB = (weight_H * eloss_file_H[:,1] + weight_C12 * eloss_file_C12[:,1]) * density_LAB
 
