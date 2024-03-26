@@ -14,3 +14,17 @@ cm2_to_barn = 1e24 # conversion between cm^2 and barn
 earth_v_km_s = 29.8
 
 vesc_km_s = {'avSHM': 544,}
+
+Gf = 1.166364*1e-5 ##Fermi constant in natural unit GeV
+sin2thetaW = 0.2229 ## Weak mixing angle from https://physics.nist.gov/cgi-bin/cuu/Value?sin2th
+mproton = 938.272*MeV
+mn = 939.565*MeV
+mC12 = 12*mp
+Delta_np = (mn-mproton)
+M_nucleus = (mproton+mn)/2
+me = 0.511*MeV
+kpc_to_cm = 3.086e+21 #1 kpc [cm]
+erg = 624.15*GeV
+
+w_value_C12_M1 = 15.11*MeV
+branching_ratio_C12_M1 = 0.89
