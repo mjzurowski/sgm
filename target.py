@@ -5,6 +5,8 @@ from constants import *
 #### Fundamental properties of a target that won't change between detectors (e.g., mass, form factors)
 ##### Note that a lot of these functions depend on additional data. These are included in subfolders in targets/, where info.txt files can be found that give detail on their units and source
 
+
+
 class Target(ABC):
     def spin_dep(self, jx):
         return (4*jx/3)*(jx+1) #### double check this defn as I think it should depend on the target
@@ -93,7 +95,31 @@ class Target(ABC):
 
     def FS2nn(self,ER):
         pass
+        
+    def FPhi2pp(self,ER):
+        pass
 
+    def FPhi2np(self,ER):
+        pass
+
+    def FPhi2pn(self,ER):
+        pass
+
+    def FPhi2nn(self,ER):
+        pass
+
+    def FPhipp(self,ER):
+        pass
+
+    def FPhinp(self,ER):
+        pass
+
+    def FPhipn(self,ER):
+        pass
+
+    def FPhinn(self,ER):
+        pass    
+    
     def FDpp(self,ER):
         pass
 
@@ -106,6 +132,18 @@ class Target(ABC):
     def FDnn(self,ER):
         pass
 
+    def FMPhi2pp(self,ER):
+        pass
+
+    def FMPhi2np(self,ER):
+        pass
+
+    def FMPhi2pn(self,ER):
+        pass
+
+    def FMPhi2nn(self,ER):
+        pass
+    
     def FS1Dpp(self,ER):
         pass
 
@@ -130,6 +168,18 @@ class Target(ABC):
     ### Some are defined with explicit g and h subscripts to match with velocity dists.
     ### Where no subscript is present should assume it is to be matched with the standard g velocity integral.
 
+
+##############     ###############
+
+#redefine the Fij operators based on Cirelli paper + include all of them here
+# check whether cp and cn should take on different values for the cross terms, i.e. cp1, cp2, cn1, cn2
+#re-write in terms of Cirelli formalism and sign convention
+#check where the spin_dep(jx) terms are supposed to go
+#The below are based on page 93-94 of https://arxiv.org/pdf/2104.12785
+#units gives the units of the form factor component of the expressions, i.e. excluding the cp and cn coefficients. 
+#The overall excpected units including the coefficients, i.e. cp cp Fij should be 
+
+    
     def F11(self,ER,cp,cn):
         """
         Defining O1,1 based on form factors
@@ -139,7 +189,29 @@ class Target(ABC):
         p_n = cp*cn*self.FMpn(ER)
         n_p = cn*cp*self.FMnp(ER)
         n_n = cn*cn*self.FMnn(ER)
-        return p_p+p_n+n_p+n_n
+        return p_p+p_n+n_p+n_n   #units=untiless
+        
+    def F33(self,ER,cp,cn):
+        """
+        Defining O3,3 based on form factors
+        cn and cp both couplings between relevant nucleon and O1 operator
+        """
+        
+        h_p_p = cp*cp*self.FS1pp(ER)
+        h_p_n = cp*cn*self.FS1pn(ER)
+        h_n_p = cn*cp*self.FS1np(ER)
+        h_n_n = cn*cn*self.FS1nn(ER)
+        h = self.spin_dep(jx)*np.power(self.Q(ER),2.)*(h_p_p+h_p_n+h_n_p+h_n_n)/8  #units=ev^2
+
+        g_p_p = cp*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2pp(ER)-np.power(vm*self.Q(ER),2.)*self.FS1pp(ER)/2)
+        g_p_n = cp*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2pn(ER)-np.power(vm*self.Q(ER),2.)*self.FS1pn(ER)/2)
+        g_n_p = cn*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2np(ER)-np.power(vm*self.Q(ER),2.)*self.FS1np(ER)/2)
+        g_n_n = cn*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2nn(ER)-np.power(vm*self.Q(ER),2.)*self.FS1nn(ER)/2)
+        g = self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/4  #units=ev^2
+
+        return [g,h]
+
+
     
     def F44(self,ER,cp,cn,jx):
         """
@@ -150,8 +222,9 @@ class Target(ABC):
         p_n = cp*cn*(self.FS1pn(ER)+self.FS2pn(ER))
         n_p = cn*cp*(self.FS1np(ER)+self.FS2np(ER))
         n_n = cn*cn*(self.FS1nn(ER)+self.FS2nn(ER))
-        return self.spin_dep(jx)*(p_p+p_n+n_p+n_n)/16
-    
+        return self.spin_dep(jx)*(p_p+p_n+n_p+n_n)/16  #units= unitless
+
+        
     def F55(self,ER,cp,cn,jx,vm):
         """
         O5,5 operator, depends on DM spin
@@ -163,13 +236,13 @@ class Target(ABC):
         h_p_n = cp*cn*self.FMpn(ER)
         h_n_p = cn*cp*self.FMnp(ER)
         h_n_n = cn*cn*self.FMnn(ER)
-        h = self.spin_dep(jx)*np.power(self.Q(ER)/mp,2.)*(h_p_p+h_p_n+h_n_p+h_n_n)/4
+        h = self.spin_dep(jx)*np.power(self.Q(ER),2.)*(h_p_p+h_p_n+h_n_p+h_n_n)/4  #units=ev^2
 
-        g_p_p = cp*cp*(np.power(self.Q(ER)/mp,4.)*self.FDpp(ER)-np.power(vm*self.Q(ER)/mp,2.)*self.FMpp(ER))
-        g_p_n = cp*cn*(np.power(self.Q(ER)/mp,4.)*self.FDpn(ER)-np.power(vm*self.Q(ER)/mp,2.)*self.FMpn(ER))
-        g_n_p = cn*cp*(np.power(self.Q(ER)/mp,4.)*self.FDnp(ER)-np.power(vm*self.Q(ER)/mp,2.)*self.FMnp(ER))
-        g_n_n = cn*cn*(np.power(self.Q(ER)/mp,4.)*self.FDnn(ER)-np.power(vm*self.Q(ER)/mp,2.)*self.FMnn(ER))
-        g = self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/4
+        g_p_p = cp*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.FDpp(ER)-np.power(vm*self.Q(ER),2.)*self.FMpp(ER))
+        g_p_n = cp*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.FDpn(ER)-np.power(vm*self.Q(ER),2.)*self.FMpn(ER))
+        g_n_p = cn*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.FDnp(ER)-np.power(vm*self.Q(ER),2.)*self.FMnp(ER))
+        g_n_n = cn*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.FDnn(ER)-np.power(vm*self.Q(ER),2.)*self.FMnn(ER))
+        g = self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/4   #units= ev^2
 
         return [g,h]
     
@@ -182,7 +255,8 @@ class Target(ABC):
         p_n = cp*cn*self.FS2pn(ER)
         n_p = cn*cp*self.FS2np(ER)
         n_n = cn*cn*self.FS2nn(ER)
-        return self.spin_dep(jx)*np.power(self.Q(ER)/mp,4.)*(p_p+p_n+n_p+n_n)/16
+        return self.spin_dep(jx)*np.power(self.Q(ER),4.)*(p_p+p_n+n_p+n_n)/16  #units=ev^4
+
     
     def F77(self,ER,cp,cn,vm):
         """
@@ -196,12 +270,48 @@ class Target(ABC):
         n_p = cn*cp*self.FS1np(ER)
         n_n = cn*cn*self.FS1nn(ER)
 
-        h = (p_p+p_n+n_p+n_n)/8
-        g = -vm*vm(p_p+p_n+n_p+n_n)/8
+        h = (p_p+p_n+n_p+n_n)/8   #units=unitless
+        g = -vm*vm(p_p+p_n+n_p+n_n)/8  #units=unitless
 
         return [g,h]
+
     
-    def F10(self,ER,cp,cn,jx):
+    def F88(self,ER,cp,cn,jx,vm):
+        """
+        O8,8 operator, depends on DM spin
+        cn and cp both couplings between relevant nucleon and O5 operator
+        Annoyingly, this FF has both g and h depedence, so lets return a list
+        Also depends on the min velocity of the DM
+        """
+        #there was a q^2 included in h that I don't think is supposed to be there, I've removed it
+        
+        h_p_p = cp*cp*self.FMpp(ER)
+        h_p_n = cp*cn*self.FMpn(ER)
+        h_n_p = cn*cp*self.FMnp(ER)
+        h_n_n = cn*cn*self.FMnn(ER)
+        h = self.spin_dep(jx)*(h_p_p+h_p_n+h_n_p+h_n_n)/4  #units=unitless
+
+        g_p_p = cp*cp*(np.power(self.Q(ER)/mp,2.)*self.FDpp(ER)-np.power(vm,2.)*self.FMpp(ER))
+        g_p_n = cp*cn*(np.power(self.Q(ER)/mp,2.)*self.FDpn(ER)-np.power(vm,2.)*self.FMpn(ER))
+        g_n_p = cn*cp*(np.power(self.Q(ER)/mp,2.)*self.FDnp(ER)-np.power(vm,2.)*self.FMnp(ER))
+        g_n_n = cn*cn*(np.power(self.Q(ER)/mp,2.)*self.FDnn(ER)-np.power(vm,2.)*self.FMnn(ER))
+        g = self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/4  #units=unitless
+
+        return [g,h]
+
+    def F99(self,ER,cp,cn,jx):
+        """
+        O9,9 operator
+        cn and cp both couplings between relevant nucleon and O6 operator
+        """
+        p_p = cp*cp*self.FS1pp(ER)
+        p_n = cp*cn*self.FS1pn(ER)
+        n_p = cn*cp*self.FS1np(ER)
+        n_n = cn*cn*self.FS1nn(ER)
+        return self.spin_dep(jx)*np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/16  #units=ev^2
+    
+    
+    def F1010(self,ER,cp,cn,jx):
         """
         O10,10 operator
         cn and cp both couplings between relevant nucleon and O10 operator
@@ -210,9 +320,116 @@ class Target(ABC):
         p_n = cp*cn*self.FS2pn(ER)
         n_p = cn*cp*self.FS2np(ER)
         n_n = cn*cn*self.FS2nn(ER)
-        return np.power(self.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)/4 ### do I need to add the converstion factor? I don't think so...
+        return np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/4  #units=ev^2
+        
+    ### do I need to add the converstion factor? I don't think so...
+
+    def F1111(self,ER,cp,cn):
+        """
+        Defining O11,11 based on form factors
+        cn and cp both couplings between relevant nucleon and O1 operator
+        """
+        p_p = cp*cp*self.FMpp(ER)
+        p_n = cp*cn*self.FMpn(ER)
+        n_p = cn*cp*self.FMnp(ER)
+        n_n = cn*cn*self.FMnn(ER)
+        return np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/4  #units=ev^2
+
+    
+     def F1212(self,ER,cp,cn):
+        """
+        Defining O12,12 based on form factors
+        cn and cp both couplings between relevant nucleon and O1 operator
+        """
+        
+        h_p_p = cp*cp*(self.FS1pp(ER)/2 + self.FS2pp(ER))
+        h_p_n = cp*cn*(self.FS1pn(ER)/2 + self.FS2pn(ER))
+        h_n_p = cn*cp*(self.FS1np(ER)/2 + self.FS2np(ER))
+        h_n_n = cn*cn*(self.FS1nn(ER)/2 + self.FS2nn(ER))
+        h = self.spin_dep(jx)*(h_p_p+h_p_n+h_n_p+h_n_n)/16  #units=unitless
+
+        g_p_p = cp*cp*(np.power(self.Q(ER)/mp,2.)*(self.Phi2pp(ER) + self.Phipp(ER))-np.power(vm,2.)*(self.FS1pp(ER)/2 + self.FS2pp(ER)))
+        g_p_n = cp*cn*(np.power(self.Q(ER)/mp,2.)*(self.Phi2pn(ER) + self.Phipn(ER))-np.power(vm,2.)*(self.FS1pn(ER)/2 + self.FS2pn(ER)))
+        g_n_p = cn*cp*(np.power(self.Q(ER)/mp,2.)*(self.Phi2np(ER) + self.Phinp(ER))-np.power(vm,2.)*(self.FS1np(ER)/2 + self.FS2np(ER)))
+        g_n_n = cn*cn*(np.power(self.Q(ER)/mp,2.)*(self.Phi2nn(ER) + self.Phinn(ER))-np.power(vm,2.)*(self.FS1nn(ER)/2 + self.FS2nn(ER)))
+        g = self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/16  #units=untiless
+
+        return [g,h]
+   
+    
+    def F1313(self,ER,cp,cn):
+        """
+        Defining O13,13 based on form factors
+        cn and cp both couplings between relevant nucleon and O1 operator
+        """
+        
+        h_p_p = cp*cp*self.FS2pp(ER)
+        h_p_n = cp*cn*self.FS2pn(ER)
+        h_n_p = cn*cp*self.FS2np(ER)
+        h_n_n = cn*cn*self.FS2nn(ER)
+        h = self.spin_dep(jx)*np.power(self.Q(ER),2.)*(h_p_p+h_p_n+h_n_p+h_n_n)/16  #units=ev^2
+
+        g_p_p = cp*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phipp(ER)-np.power(vm*self.Q(ER),2.)*self.FS2pp(ER))
+        g_p_n = cp*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phipn(ER)-np.power(vm*self.Q(ER),2.)*self.FS2pn(ER))
+        g_n_p = cn*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phinp(ER)-np.power(vm*self.Q(ER),2.)*self.FS2np(ER))
+        g_n_n = cn*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phinn(ER)-np.power(vm*self.Q(ER),2.)*self.FS2nn(ER))
+        g = self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/16  #units=ev^2
+
+        return [g,h]
+
+
+    def F1414(self,ER,cp,cn,vm):
+        """
+        O14,14 operator, depends on DM spin
+        cn and cp both couplings between relevant nucleon and O7 operator
+        Annoyingly, this FF has both g and h depedence, so lets return a list
+        Also depends on the min velocity of the DM
+        """
+        p_p = cp*cp*self.FS1pp(ER)
+        p_n = cp*cn*self.FS1pn(ER)
+        n_p = cn*cp*self.FS1np(ER)
+        n_n = cn*cn*self.FS1nn(ER)
+
+        h = np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/32    #units=ev^2
+        g = -vm*vm*np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/32   #units=ev^2
+
+        return [g,h]
+    
+
+    def F1515(self,ER,cp,cn):
+        """
+        Defining O15,15 based on form factors
+        cn and cp both couplings between relevant nucleon and O1 operator
+        """
+        
+        h_p_p = cp*cp*self.FS1pp(ER)
+        h_p_n = cp*cn*self.FS1pn(ER)
+        h_n_p = cn*cp*self.FS1np(ER)
+        h_n_n = cn*cn*self.FS1nn(ER)
+        h = self.spin_dep(jx)*np.power(self.Q(ER),4.)*(h_p_p+h_p_n+h_n_p+h_n_n)/32  #units=ev^4
+
+        g_p_p = cp*cp*(np.power(self.Q(ER)/(mp**(1/3)),6.)*self.Phi2pp(ER)-np.power(math.sqrt(vm)*self.Q(ER),4.)*self.FS1pp(ER)/2)
+        g_p_n = cp*cn*(np.power(self.Q(ER)/(mp**(1/3)),6.)*self.Phi2pn(ER)-np.power(math.sqrt(vm)*self.Q(ER),4.)*self.FS1pn(ER)/2)
+        g_n_p = cn*cp*(np.power(self.Q(ER)/(mp**(1/3)),6.)*self.Phi2np(ER)-np.power(math.sqrt(vm)*self.Q(ER),4.)*self.FS1np(ER)/2)
+        g_n_n = cn*cn*(np.power(self.Q(ER)/(mp**(1/3)),6.)*self.Phi2nn(ER)-np.power(math.sqrt(vm)*self.Q(ER),4.)*self.FS1nn(ER)/2)
+        g = self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/16  #units=ev^4
+
+        return [g,h]    
+
+    
     
 ###### FF below here are inteference terms, and so depend on couplings to two operators
+    def F13(self,ER,cp1,cn1,cp3,cn3,jx):
+        """
+        O1,3 operator, depends on DM spin
+        """
+        p_p = cp1*cp3*self.FMPhi2pp(ER)
+        p_n = cp1*cn3*self.FMPhi2pn(ER)
+        n_p = cn1*cp3*self.FMPhi2np(ER)
+        n_n = cn1*cn3*self.FMPhi2nn(ER)
+        return -self.spin_dep(jx)*np.power(self.Q(ER)/math.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/2   #units=ev
+    
+
     def F45(self,ER,cp4,cn4,cp5,cn5,jx):
         """
         O4,5 operator, depends on DM spin
@@ -221,18 +438,76 @@ class Target(ABC):
         p_n = cp4*cn5*self.FS1Dpn(ER)
         n_p = cn4*cp5*self.FS1Dnp(ER)
         n_n = cn4*cn5*self.FS1Dnn(ER)
-        return 0.25*self.spin_dep(jx)*np.power(self.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)
+        return -self.spin_dep(jx)*np.power(self.Q(ER)/math.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8   #units=ev
     
     def F46(self,ER,cp4,cn4,cp6,cn6,jx):
         """
-        O4,5 operator, depends on DM spin
+        O4,6 operator, depends on DM spin
         """
         p_p = cp4*cp6*self.FS2pp(ER)
         p_n = cp4*cn6*self.FS2pn(ER)
         n_p = cn4*cp6*self.FS2np(ER)
         n_n = cn4*cn6*self.FS2nn(ER)
-        return self.spin_dep(jx)*np.power(self.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)/8
-    
+        return self.spin_dep(jx)*np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/16  #units=ev^2
+
+#double check 9,8 and the order of the S1 D form factor
+    def F98(self,ER,cp9,cn9,cp8,cn8,jx):
+        """
+        O9,8 operator, depends on DM spin
+        """
+        p_p = cp9*cp8*self.FS1Dpp(ER)
+        p_n = cp9*cn8*self.FS1Dpn(ER)
+        n_p = cn9*cp8*self.FS1Dnp(ER)
+        n_n = cn9*cn8*self.FS1Dnn(ER)
+        return self.spin_dep(jx)*np.power(self.Q(ER)/math.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8   #units=ev
+
+
+    def F1112(self,ER,cp11,cn11,cp12,cn12,jx):
+        """
+        O11,12 operator, depends on DM spin
+        """
+        p_p = cp11*cp12*self.FMPhi2pp(ER)
+        p_n = cp11*cn12*self.FMPhi2pn(ER)
+        n_p = cn11*cp12*self.FMPhi2np(ER)
+        n_n = cn11*cn12*self.FMPhi2nn(ER)
+        return -self.spin_dep(jx)*np.power(self.Q(ER)/math.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8   #units=ev
+
+
+    def F1115(self,ER,cp11,cn11,cp15,cn15,jx):
+        """
+        O11,15 operator, depends on DM spin
+        """
+        p_p = cp11*cp15*self.FMPhi2pp(ER)
+        p_n = cp11*cn15*self.FMPhi2pn(ER)
+        n_p = cn11*cp15*self.FMPhi2np(ER)
+        n_n = cn11*cn15*self.FMPhi2nn(ER)
+        return self.spin_dep(jx)*np.power(self.Q(ER)/(mp**(1/4)),4.)*(p_p+p_n+n_p+n_n)/8   #units=ev^3
+
+
+    def F1215(self,ER,cp12,cn12,cp15,cn15,jx):
+        """
+        Defining O12,15 based on form factors
+        cn and cp both couplings between relevant nucleon and O1 operator
+        """
+        
+        h_p_p = cp*cp*self.FS1pp(ER)
+        h_p_n = cp*cn*self.FS1pn(ER)
+        h_n_p = cn*cp*self.FS1np(ER)
+        h_n_n = cn*cn*self.FS1nn(ER)
+        h = -self.spin_dep(jx)*np.power(self.Q(ER),2.)*(h_p_p+h_p_n+h_n_p+h_n_n)/32  #units=ev^2
+
+        g_p_p = cp*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2pp(ER)-np.power(vm*self.Q(ER),2.)*self.FS1pp(ER)/2)
+        g_p_n = cp*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2pn(ER)-np.power(vm*self.Q(ER),2.)*self.FS1pn(ER)/2)
+        g_n_p = cn*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2np(ER)-np.power(vm*self.Q(ER),2.)*self.FS1np(ER)/2)
+        g_n_n = cn*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2nn(ER)-np.power(vm*self.Q(ER),2.)*self.FS1nn(ER)/2)
+        g = -self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/16  #units=ev^2
+
+        return [g,h]    
+
+
+#####################
+
+
 ##### Electron transition probs
     def eNL(self):
         """
@@ -266,3 +541,6 @@ class Target(ABC):
         Output units are [cm2/atom]
         """
         pass
+
+
+
