@@ -336,7 +336,7 @@ class Target(ABC):
         return np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/4  #units=ev^2
 
     
-     def F1212(self,ER,cp,cn):
+    def F1212(self,ER,cp,cn):
         """
         Defining O12,12 based on form factors
         cn and cp both couplings between relevant nucleon and O1 operator
