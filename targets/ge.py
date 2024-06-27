@@ -1381,7 +1381,7 @@ class Ge(Target):
         return 0.205*self.ge70.FPhi2np(ER)+0.274*self.ge72.FPhi2np(ER)+0.0776*self.ge73.FPhi2np(ER)+0.365*self.ge74.FPhi2np(ER)+0.0775*self.ge76.FPhi2np(ER)
 
     def FPhi2nn(self, ER):
-        return 0.205*self.ge70.FPhi2nn(ER)+0.274*self.ge72.FPhi2nn(ER)+0.0776*self.ge73.FPhi2nn(ER)+0.365*self.ge74.FPhi2nn(ER)+0.0775*self.ge76.FPhi2nn(ER)
+        return 0.205*self.ge70.FPhi2nn(ER)+0.274*self.ge72.FPhi2nn(ER)+0.0776*self.ge73.FPhi2nn(ER)+0.365*self.ge74.FFPhi2nn(ER)+0.0775*self.ge76.FPhi2nn(ER)
         
     def FPhipp(self, ER):
         return 0.205*self.ge70.FPhipp(ER)+0.274*self.ge72.FPhipp(ER)+0.0776*self.ge73.FPhipp(ER)+0.365*self.ge74.FPhipp(ER)+0.0775*self.ge76.FPhipp(ER)
