@@ -6,9 +6,9 @@ import sympy as sp
 import numpy as np
 from sympy import symbols
 
-#ci(N, Coeff, mchi, Lambda) refer to the NR coefficients
+#ci(N, Coeff, mX, Lambda) refer to the NR coefficients
 
-#N=p,n mchi is DM mass Lambda is high energy physics coefficient Coeff is the name of the list which turns on or off certain cq and cg coefficients - to be set by user
+#N=p,n mX is DM mass Lambda is high energy physics coefficient Coeff is the name of the list which turns on or off certain cq and cg coefficients - to be set by user
 
 ##########################################
 #Define vector/list which turns on or turns off different cq and cg coefficient
@@ -60,16 +60,16 @@ def cq10(Lambda):
     return 1/(Lambda**2)
 
 def cg1(Lambda):
-    return None
+    return 0
 
 def cg2(Lambda):
-    return None
+    return 0
 
 def cg3(Lambda):
-    return None
+    return 0
 
 def cg4(Lambda):
-    return None
+    return 0
 
 
 #Convert relativistic to quark-gloun operators
@@ -164,16 +164,16 @@ def C4(Coeff):
     return sum( Coeff[3]*cq4(q,Lambda)*mBar/m(q) for q in [u,d,s,t,b,c] )
 
 
-def Rc1(N, Lambda,Coeff):
+def Rc1(N, Lambda,Coeff,mp):
     return sum( Coeff[0]*cq1(q,Lambda)*(mp/m(q)) * fT(N,q) for q in [u,d,s] ) + (2/27)*fTG(N) * ( sum( (mp/m(q))*Coeff[0]*cq1(q,Lambda) for q in [c,b,t] )  - Coeff[10]*cg1(Lambda) *mp)
 
-def Rc2(N,Lambda,Coeff):
+def Rc2(N,Lambda,Coeff,mp):
     return sum( Coeff[1]*cq2(q,Lambda)*(mp/m(q)) * fT(N,q) for q in [u,d,s] ) + (2/27)*fTG(N) * ( sum( (mp/m(q))*Coeff[1]*cq2(q,Lambda) for q in [c,b,t] )  - Coeff[11]*cg2(Lambda) *mp)
 
-def Rc3(N,Lambda,Coeff):
+def Rc3(N,Lambda,Coeff,mp):
     return sum( (mp/m(q))*CDelta(N,q)*( (Coeff[2]*cq3(q,Lambda)-C3(Coeff)) + Coeff[12]*cg3(Lambda)*mBar )  for q in [u,d,s] )
 
-def Rc4(N,Lambda,Coeff):
+def Rc4(N,Lambda,Coeff,mp):
     return sum( (mp/m(q))*CDelta(N,q)*( (Coeff[3]*cq4(q,Lambda)-C4(Coeff) ) + Coeff[13]*cg4(Lambda)*mBar )  for q in [u,d,s] )
 
 def Rc5(N,Lambda,Coeff):
@@ -209,38 +209,38 @@ def Rc10(N,Lambda,Coeff):
 
 #check these - do they go up to O15?
 
-def c1(N,Coeff,mchi,Lambda):
-    return 4*mchi*mp*Rc1(N, Lambda,Coeff) + 4*mchi*mp*Rc5(N, Lambda,Coeff)
+def c1(N,Coeff,mX,Lambda,mp):
+    return 4*mX*mp*Rc1(N, Lambda,Coeff,mp) + 4*mX*mp*Rc5(N, Lambda,Coeff)
 
-def c3(N,Coeff,mchi,Lambda):
+def c3(N,Coeff,mX,Lambda):
     return None #not defined
 
-def c4(N,Coeff,mchi,Lambda):
-    return -16*mchi*mp*Rc8(N, Lambda,Coeff) + 32* mchi*mp*Rc9(N, Lambda,Coeff)
+def c4(N,Coeff,mX,Lambda,mp):
+    return -16*mX*mp*Rc8(N, Lambda,Coeff) + 32* mX*mp*Rc9(N, Lambda,Coeff)
 
-def c5(N,Coeff,mchi,Lambda):
+def c5(N,Coeff,mX,Lambda):
     return None #not defined
 
-def c6(N,Coeff,mchi,Lambda):
-    return 4*Rc4(N, Lambda,Coeff)
+def c6(N,Coeff,mX,Lambda,mp):
+    return 4*Rc4(N, Lambda,Coeff,mp)
 
-def c7(N,Coeff,mchi,Lambda):
-    return -8*mchi*mp*Rc7(N, Lambda,Coeff)
+def c7(N,Coeff,mX,Lambda,mp):
+    return -8*mX*mp*Rc7(N, Lambda,Coeff)
 
-def c8(N,Coeff,mchi,Lambda):
-    return 8*mchi*mp*Rc6(N, Lambda,Coeff)
+def c8(N,Coeff,mX,Lambda,mp):
+    return 8*mX*mp*Rc6(N, Lambda,Coeff)
 
-def c9(N,Coeff,mchi,Lambda):
-    return 8*mchi*Rc6(N, Lambda,Coeff) + 8*mp*Rc7(N, Lambda,Coeff)
+def c9(N,Coeff,mX,Lambda,mp):
+    return 8*mX*Rc6(N, Lambda,Coeff) + 8*mp*Rc7(N, Lambda,Coeff)
 
-def c10(N,Coeff,mchi,Lambda):
-    return 4*mchi*Rc3(N, Lambda,Coeff)-8*mp*Rc10(N, Lambda,Coeff)
+def c10(N,Coeff,mX,Lambda,mp):
+    return 4*mX*Rc3(N, Lambda,Coeff,mp)-8*mp*Rc10(N, Lambda,Coeff)
 
-def c11(N,Coeff,mchi,Lambda):
-    return -4*mp*Rc2(N, Lambda,Coeff) + 8*mchi*Rc10(N, Lambda,Coeff)
+def c11(N,Coeff,mX,Lambda,mp):
+    return -4*mp*Rc2(N, Lambda,Coeff,mp) + 8*mX*Rc10(N, Lambda,Coeff)
 
-def c12(N,Coeff,mchi,Lambda):
-    return -32*mchi*mp*Rc10(N, Lambda,Coeff)
+def c12(N,Coeff,mX,Lambda,mp):
+    return -32*mX*mp*Rc10(N, Lambda,Coeff)
 
 
 
