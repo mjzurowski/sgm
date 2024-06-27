@@ -17,7 +17,7 @@ import numpy as np
 
 class Ge70(Target):
 
-    def __init__(self, shell_model=="Fitz"):
+    def __init__(self, shell_model="Fitz"):
         # Choose the shell model on initialisation to make it easier to customise on the detector side rather than when writing models.
         self.shell_model=shell_model
         
@@ -242,7 +242,7 @@ class Ge70(Target):
 ####################
 class Ge72(Target):
 
-    def __init__(self, shell_model=="Fitz"):
+    def __init__(self, shell_model="Fitz"):
         # Choose the shell model on initialisation to make it easier to customise on the detector side rather than when writing models.
         self.shell_model=shell_model
         
@@ -467,7 +467,7 @@ class Ge72(Target):
 ####################
 class Ge73(Target):
 
-    def __init__(self, shell_model=="Fitz"):
+    def __init__(self, shell_model="Fitz"):
         # Choose the shell model on initialisation to make it easier to customise on the detector side rather than when writing models.
         self.shell_model=shell_model
         
@@ -872,7 +872,7 @@ class Ge73(Target):
 ####################
 class Ge74(Target):
 
-    def __init__(self, shell_model=="Fitz"):
+    def __init__(self, shell_model="Fitz"):
         # Choose the shell model on initialisation to make it easier to customise on the detector side rather than when writing models.
         self.shell_model=shell_model
         
@@ -1097,7 +1097,7 @@ class Ge74(Target):
 ####################
 class Ge76(Target):
 
-    def __init__(self, shell_model=="Fitz"):
+    def __init__(self, shell_model="Fitz"):
         # Choose the shell model on initialisation to make it easier to customise on the detector side rather than when writing models.
         self.shell_model=shell_model
         
@@ -1322,7 +1322,7 @@ class Ge76(Target):
 ####################
 class Ge(Target):
 
-    def __init__(self, shell_model=="Fitz"):
+    def __init__(self, shell_model="Fitz"):
         # Choose the shell model on initialisation to make it easier to customise on the detector side rather than when writing models.
         # Initialise all the isotopes: 70Ge (20%), 72Ge (27.4%), 73Ge (7.76%), 74Ge (36.5%), 76Ge (7.75%).
         # We'll assume we always want to use the same shell model, but somewhat trivial to tweak if we decide to change that
@@ -1381,7 +1381,7 @@ class Ge(Target):
         return 0.205*self.ge70.FPhi2np(ER)+0.274*self.ge72.FPhi2np(ER)+0.0776*self.ge73.FPhi2np(ER)+0.365*self.ge74.FPhi2np(ER)+0.0775*self.ge76.FPhi2np(ER)
 
     def FPhi2nn(self, ER):
-        return 0.205*self.ge70.FPhi2nn(ER)+0.274*self.ge72.FPhi2nn(ER)+0.0776*self.ge73.FPhi2nn(ER)+0.365*self.ge74.FFPhi2nn(ER)+0.0775*self.ge76.FPhi2nn(ER)
+        return 0.205*self.ge70.FPhi2nn(ER)+0.274*self.ge72.FPhi2nn(ER)+0.0776*self.ge73.FPhi2nn(ER)+0.365*self.ge74.FPhi2nn(ER)+0.0775*self.ge76.FPhi2nn(ER)
         
     def FPhipp(self, ER):
         return 0.205*self.ge70.FPhipp(ER)+0.274*self.ge72.FPhipp(ER)+0.0776*self.ge73.FPhipp(ER)+0.365*self.ge74.FPhipp(ER)+0.0775*self.ge76.FPhipp(ER)

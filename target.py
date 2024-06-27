@@ -93,7 +93,31 @@ class Target(ABC):
 
     def FS2nn(self,ER):
         pass
+        
+    def FPhi2pp(self,ER):
+        pass
 
+    def FPhi2np(self,ER):
+        pass
+
+    def FPhi2pn(self,ER):
+        pass
+
+    def FPhi2nn(self,ER):
+        pass
+
+    def FPhipp(self,ER):
+        pass
+
+    def FPhinp(self,ER):
+        pass
+
+    def FPhipn(self,ER):
+        pass
+
+    def FPhinn(self,ER):
+        pass    
+    
     def FDpp(self,ER):
         pass
 
@@ -106,6 +130,18 @@ class Target(ABC):
     def FDnn(self,ER):
         pass
 
+    def FMPhi2pp(self,ER):
+        pass
+
+    def FMPhi2np(self,ER):
+        pass
+
+    def FMPhi2pn(self,ER):
+        pass
+
+    def FMPhi2nn(self,ER):
+        pass
+    
     def FS1Dpp(self,ER):
         pass
 
@@ -141,6 +177,26 @@ class Target(ABC):
         n_n = cn*cn*self.FMnn(ER)
         return p_p+p_n+n_p+n_n
     
+    def F33(self,ER,cp,cn,vm):
+        """
+        Defining O3,3 based on form factors
+        cn and cp both couplings between relevant nucleon and O1 operator
+        """
+        
+        h_p_p = cp*cp*self.FS1pp(ER)
+        h_p_n = cp*cn*self.FS1pn(ER)
+        h_n_p = cn*cp*self.FS1np(ER)
+        h_n_n = cn*cn*self.FS1nn(ER)
+        h = np.power(self.Q(ER)/mp,4.)*(h_p_p+h_p_n+h_n_p+h_n_n)/8  
+
+        g_p_p = cp*cp*(np.power(self.Q(ER)/mp,2.)*self.FPhi2pp(ER)/2-np.power(vm*self.Q(ER)/mp,4.)*self.FS1pp(ER)/8)
+        g_p_n = cp*cn*(np.power(self.Q(ER)/mp,2.)*self.FPhi2pn(ER)/2-np.power(vm*self.Q(ER)/mp,4.)*self.FS1pn(ER)/8)
+        g_n_p = cn*cp*(np.power(self.Q(ER)/mp,2.)*self.FPhi2np(ER)/2-np.power(vm*self.Q(ER)/mp,4.)*self.FS1np(ER)/8)
+        g_n_n = cn*cn*(np.power(self.Q(ER)/mp,2.)*self.FPhi2nn(ER)/2-np.power(vm*self.Q(ER)/mp,4.)*self.FS1nn(ER)/8)
+        g = (g_p_p+g_p_n+g_n_p+g_n_n)
+
+        return [g,h]
+
     def F44(self,ER,cp,cn,jx):
         """
         O4,4 operator, depends on DM spin
