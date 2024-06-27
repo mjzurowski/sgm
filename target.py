@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from constants import *
+from sympy import symbols
+
+Shell = symbols('Shell') # refers to the shell model interaction employed
 
 #### Fundamental properties of a target that won't change between detectors (e.g., mass, form factors)
 ##### Note that a lot of these functions depend on additional data. These are included in subfolders in targets/, where info.txt files can be found that give detail on their units and source
@@ -60,100 +63,100 @@ class Target(ABC):
         """
         return np.power((1/(197.327 *1E6))*self.Q(ER)*self.B()/2.,2.)
     
-    def FMpp(self,ER):
+    def FMpp(self,Shell,ER):
         pass
 
-    def FMnp(self,ER):
+    def FMnp(self,Shell,ER):
         pass
 
-    def FMpn(self,ER):
+    def FMpn(self,Shell,ER):
         pass
 
-    def FMnn(self,ER):
+    def FMnn(self,Shell,ER):
         pass
 
-    def FS1pp(self,ER):
+    def FS1pp(self,Shell,ER):
         pass
 
-    def FS1np(self,ER):
+    def FS1np(self,Shell,ER):
         pass
 
-    def FS1pn(self,ER):
+    def FS1pn(self,Shell,ER):
         pass
 
-    def FS1nn(self,ER):
+    def FS1nn(self,Shell,ER):
         pass
 
-    def FS2pp(self,ER):
+    def FS2pp(self,Shell,ER):
         pass
 
-    def FS2np(self,ER):
+    def FS2np(self,Shell,ER):
         pass
 
-    def FS2pn(self,ER):
+    def FS2pn(self,Shell,ER):
         pass
 
-    def FS2nn(self,ER):
+    def FS2nn(self,Shell,ER):
         pass
         
-    def FPhi2pp(self,ER):
+    def FPhi2pp(self,Shell,ER):
         pass
 
-    def FPhi2np(self,ER):
+    def FPhi2np(self,Shell,ER):
         pass
 
-    def FPhi2pn(self,ER):
+    def FPhi2pn(self,Shell,ER):
         pass
 
-    def FPhi2nn(self,ER):
+    def FPhi2nn(self,Shell,ER):
         pass
 
-    def FPhipp(self,ER):
+    def FPhipp(self,Shell,ER):
         pass
 
-    def FPhinp(self,ER):
+    def FPhinp(self,Shell,ER):
         pass
 
-    def FPhipn(self,ER):
+    def FPhipn(self,Shell,ER):
         pass
 
-    def FPhinn(self,ER):
+    def FPhinn(self,Shell,ER):
         pass    
     
-    def FDpp(self,ER):
+    def FDpp(self,Shell,ER):
         pass
 
-    def FDnp(self,ER):
+    def FDnp(self,Shell,ER):
         pass
 
-    def FDpn(self,ER):
+    def FDpn(self,Shell,ER):
         pass
 
-    def FDnn(self,ER):
+    def FDnn(self,Shell,ER):
         pass
 
-    def FMPhi2pp(self,ER):
+    def FMPhi2pp(self,Shell,ER):
         pass
 
-    def FMPhi2np(self,ER):
+    def FMPhi2np(self,Shell,ER):
         pass
 
-    def FMPhi2pn(self,ER):
+    def FMPhi2pn(self,Shell,ER):
         pass
 
-    def FMPhi2nn(self,ER):
+    def FMPhi2nn(self,Shell,ER):
         pass
     
-    def FS1Dpp(self,ER):
+    def FS1Dpp(self,Shell,ER):
         pass
 
-    def FS1Dnp(self,ER):
+    def FS1Dnp(self,Shell,ER):
         pass
 
-    def FS1Dpn(self,ER):
+    def FS1Dpn(self,Shell,ER):
         pass
 
-    def FS1Dnn(self,ER):
+    def FS1Dnn(self,Shell,ER):
         pass
 
     def Helm(self,ER):
@@ -180,40 +183,40 @@ class Target(ABC):
 #The overall excpected units including the coefficients, i.e. cp cp Fij should be 
 
     
-    def F11(self,ER,cp,cn):
+    def F11(self,Shell,ER,cp,cn):
         """
         Defining O1,1 based on form factors
         cn and cp both couplings between relevant nucleon and O1 operator
         """
-        p_p = cp*cp*self.FMpp(ER)
-        p_n = cp*cn*self.FMpn(ER)
-        n_p = cn*cp*self.FMnp(ER)
-        n_n = cn*cn*self.FMnn(ER)
+        p_p = cp*cp*self.FMpp(Shell,ER)
+        p_n = cp*cn*self.FMpn(Shell,ER)
+        n_p = cn*cp*self.FMnp(Shell,ER)
+        n_n = cn*cn*self.FMnn(Shell,ER)
         return p_p+p_n+n_p+n_n   #units=untiless
         
-    def F33(self,ER,cp,cn):
+    def F33(self,Shell,ER,cp,cn):
         """
         Defining O3,3 based on form factors
         cn and cp both couplings between relevant nucleon and O1 operator
         """
         
-        h_p_p = cp*cp*self.FS1pp(ER)
-        h_p_n = cp*cn*self.FS1pn(ER)
-        h_n_p = cn*cp*self.FS1np(ER)
-        h_n_n = cn*cn*self.FS1nn(ER)
+        h_p_p = cp*cp*self.FS1pp(Shell,ER)
+        h_p_n = cp*cn*self.FS1pn(Shell,ER)
+        h_n_p = cn*cp*self.FS1np(Shell,ER)
+        h_n_n = cn*cn*self.FS1nn(Shell,ER)
         h = self.spin_dep(jx)*np.power(self.Q(ER),2.)*(h_p_p+h_p_n+h_n_p+h_n_n)/8  #units=ev^2
 
-        g_p_p = cp*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2pp(ER)-np.power(vm*self.Q(ER),2.)*self.FS1pp(ER)/2)
-        g_p_n = cp*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2pn(ER)-np.power(vm*self.Q(ER),2.)*self.FS1pn(ER)/2)
-        g_n_p = cn*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2np(ER)-np.power(vm*self.Q(ER),2.)*self.FS1np(ER)/2)
-        g_n_n = cn*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2nn(ER)-np.power(vm*self.Q(ER),2.)*self.FS1nn(ER)/2)
+        g_p_p = cp*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2pp(Shell,ER)-np.power(vm*self.Q(ER),2.)*self.FS1pp(Shell,ER)/2)
+        g_p_n = cp*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2pn(Shell,ER)-np.power(vm*self.Q(ER),2.)*self.FS1pn(Shell,ER)/2)
+        g_n_p = cn*cp*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2np(Shell,ER)-np.power(vm*self.Q(ER),2.)*self.FS1np(Shell,ER)/2)
+        g_n_n = cn*cn*(np.power(self.Q(ER)/math.sqrt(mp),4.)*self.Phi2nn(Shell,ER)-np.power(vm*self.Q(ER),2.)*self.FS1nn(Shell,ER)/2)
         g = self.spin_dep(jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/4  #units=ev^2
 
         return [g,h]
 
 
     
-    def F44(self,ER,cp,cn,jx):
+    def F44(self,Shell,ER,cp,cn,jx):
         """
         O4,4 operator, depends on DM spin
         cn and cp both couplings between relevant nucleon and O4 operator
