@@ -104,14 +104,22 @@ class Detector(ABC):
         """
         pass
 
-    def dRdE(self,E,Model,NR=True,DE=0.01,**kwargs):
+    def dRdE(self, E, Model, NR=True, DE=0.01, Emax=None, **kwargs):
         """
         Observed rate for Model object smeared with resolution
         NR is a flag (default set true) that allows you to turn on and off nuclear recoil vs electron recoil (which will have different conversion factors to observed energy)
         DE is the step size for the energy array used for integration
         """
-        energy_arr = np.arange(DE,2*self.Emax(),DE)
-        rate_arr = [self.dRdE_True(E2,Model,NR,**kwargs)*self.Res(E,E2) for E2 in energy_arr]
-        return integrate.trapz(rate_arr,energy_arr)/DE  ## double check this normalisation....
+        if Emax is None:
+            Emax = 2. * self.Emax()
+        energy_arr = np.arange(DE, Emax, DE)
+        rate_arr = [self.dRdE_True(E2,Model,NR,**kwargs)*self.Res(E,E2)*self.Eff(E) for E2 in energy_arr]
+        res = []
+        for i in range(0,len(E)):
+            s=0
+            for j in range(1,len(rate_arr)):
+                s+=0.5*(rate_arr[j-1][i] + rate_arr[j][i])
+            res.append(s)
+        return res
 
     

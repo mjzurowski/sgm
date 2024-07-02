@@ -13,7 +13,7 @@ class SIWIMP(DMModel):
 
        Output units: [km/s]
        """
-       return (c*1.E-3)*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
     def dRdER(self,Target,ER,mX,sig,VelDist):
         """
@@ -38,7 +38,7 @@ class WIMPO3(DMModel):
 
        Output units: [km/s]
        """
-       return (c*1.E-3)*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
     def dRdER(self,Target,ER,mX,sig,VelDist):
         """
@@ -47,13 +47,14 @@ class WIMPO3(DMModel):
         [ER] = [eV] DM recoil energy
         [sig] = [cm]^2 cross section
 
-        Output units: [cm^2]/[eV] 
+        Output units: cpd/kg/keV
         """
         vm = self.vmin(Target,mX,ER)
-        FF = Target.F33(ER,1/np.sqrt(2),1/np.sqrt(2),vm) ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
+        FF = Target.F33(ER,1,1,vm/kms) ## form factor with couplings. Note that proton and neutron couplings are normalised to 1. vmin needs to be unitless
+        # maybe better to bake in the unit conversion on the form factor side?
         FF_g = FF[0] ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
         FF_h = FF[1]
-        cross_sec = sig*2 ## as we normalise the nucleon vector [cn, cp] our built in cross section is sigma_N. Multiply by 2 to get this from sigma_p (which is generally assumed to be the input)
+        cross_sec = sig ## as we normalise the nucleon vector [cn, cp] our built in cross section is sigma_N. Multiply by 2 to get this from sigma_p (which is generally assumed to be the input)
         dsigdER_g = cross_sec*FF_g*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
         dsigdER_h = cross_sec*FF_h*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
         return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
@@ -71,7 +72,7 @@ class SIWIMP_Helm(DMModel):
 
        Output units: [km/s]
        """
-       return (c*1.E-3)*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
     def dRdER(self,Target,ER,mX,sig,VelDist):
         """
@@ -80,7 +81,7 @@ class SIWIMP_Helm(DMModel):
         [ER] = [eV] DM recoil energy
         [sig] = [cm]^2 cross section
 
-        Output units: [cm^2]/[eV] 
+        Output units: cpd/kg/keV
         """
         FF = Target.Helm(ER)**2 ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
         dsigdER = (1/kg_to_eV)*sig*FF*Target.A()*Target.A()/(2*Target.N_T()*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]

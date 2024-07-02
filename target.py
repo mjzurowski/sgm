@@ -182,18 +182,29 @@ class Target(ABC):
         Defining O3,3 based on form factors
         cn and cp both couplings between relevant nucleon and O1 operator
         """
-        
         h_p_p = cp*cp*self.FS1pp(ER)
         h_p_n = cp*cn*self.FS1pn(ER)
         h_n_p = cn*cp*self.FS1np(ER)
         h_n_n = cn*cn*self.FS1nn(ER)
-        h = np.power(self.Q(ER)/mp,4.)*(h_p_p+h_p_n+h_n_p+h_n_n)/8  
+        h = np.power(self.Q(ER)/mp,2.)*(h_p_p+h_p_n+h_n_p+h_n_n)/8  #unitless
 
-        g_p_p = cp*cp*(np.power(self.Q(ER)/mp,2.)*self.FPhi2pp(ER)/2-np.power(vm*self.Q(ER)/mp,4.)*self.FS1pp(ER)/8)
-        g_p_n = cp*cn*(np.power(self.Q(ER)/mp,2.)*self.FPhi2pn(ER)/2-np.power(vm*self.Q(ER)/mp,4.)*self.FS1pn(ER)/8)
-        g_n_p = cn*cp*(np.power(self.Q(ER)/mp,2.)*self.FPhi2np(ER)/2-np.power(vm*self.Q(ER)/mp,4.)*self.FS1np(ER)/8)
-        g_n_n = cn*cn*(np.power(self.Q(ER)/mp,2.)*self.FPhi2nn(ER)/2-np.power(vm*self.Q(ER)/mp,4.)*self.FS1nn(ER)/8)
-        g = (g_p_p+g_p_n+g_n_p+g_n_n)
+        g_p_p = cp*cp*(np.power(self.Q(ER)/mp,4.)*self.FPhi2pp(ER)/4-np.power(vm*self.Q(ER)/mp,2.)*self.FS1pp(ER)/8)
+        g_p_n = cp*cn*(np.power(self.Q(ER)/mp,4.)*self.FPhi2pn(ER)/4-np.power(vm*self.Q(ER)/mp,2.)*self.FS1pn(ER)/8)
+        g_n_p = cn*cp*(np.power(self.Q(ER)/mp,4.)*self.FPhi2np(ER)/4-np.power(vm*self.Q(ER)/mp,2.)*self.FS1np(ER)/8)
+        g_n_n = cn*cn*(np.power(self.Q(ER)/mp,4.)*self.FPhi2nn(ER)/4-np.power(vm*self.Q(ER)/mp,2.)*self.FS1nn(ER)/8)
+        g = (g_p_p+g_p_n+g_n_p+g_n_n)  #unitless
+
+        # h_p_p = cp*cp*self.FS1pp(ER)
+        # h_p_n = cp*cn*self.FS1pn(ER)
+        # h_n_p = cn*cp*self.FS1np(ER)
+        # h_n_n = cn*cn*self.FS1nn(ER)
+        # h = np.power(self.Q(ER),2.)*(h_p_p+h_p_n+h_n_p+h_n_n)  #units=ev^2
+
+        # g_p_p = cp*cp*(np.power(self.Q(ER)*self.Q(ER)/mp,2.)*self.FPhi2pp(ER)/4-np.power(vm*self.Q(ER),2.)*self.FS1pp(ER))
+        # g_p_n = cp*cn*(np.power(self.Q(ER)*self.Q(ER)/mp,2.)*self.FPhi2pn(ER)/4-np.power(vm*self.Q(ER),2.)*self.FS1pn(ER))
+        # g_n_p = cn*cp*(np.power(self.Q(ER)*self.Q(ER)/mp,2.)*self.FPhi2np(ER)/4-np.power(vm*self.Q(ER),2.)*self.FS1np(ER))
+        # g_n_n = cn*cn*(np.power(self.Q(ER)*self.Q(ER)/mp,2.)*self.FPhi2nn(ER)/4-np.power(vm*self.Q(ER),2.)*self.FS1nn(ER))
+        # g = (g_p_p+g_p_n+g_n_p+g_n_n)  #units=ev^2
 
         return [g,h]
 

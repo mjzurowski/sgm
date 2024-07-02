@@ -10,6 +10,12 @@ A target is a nucleus able to undergo scattering. It should be defined with its 
 The current targets are available:
 - Na (na.py)
 - I (i.py)
+- Ge (ge.py)
+    - defined based on a number of different isotopes: 70Ge (20%), 72Ge (27.4%), 73Ge (7.76%), 74Ge (36.5%), 76Ge (7.75%).
+    - also allow for different nuclear structure models: Fitzpatrick, JUN45, and jj44b (see https://arxiv.org/abs/2311.15764 for details)
+- Si (si.py)
+    - defined based on a number of different isotopes: 28Si (92.2%), 29Si (4.7%), 30Si (3.1%).
+    - also allow for different nuclear structure models: Fitzpatrick, USDB (see https://arxiv.org/abs/2311.15764 for details)
 
 2. DM model (dmmodel.py)
 The user must define a DM interaction model (as a function of recoil energy) by creating a new "DMModel" object which requires definition of a minimum velocity (in units of km/s) and a differential cross section (in units of cm2/eV). These will both (probably) be a function of target objects which will be read in as an argument for the functions.
@@ -24,6 +30,7 @@ If this is being used with an ER interaction model (i.e., backgrounds), dRdE can
 The current detectors are available (see detectors/):
 - DAMA (dama.py)
 - COSINE (cosine.py)
+- Approximations of SuperCDMS GeHV and SiHV (scdms.py)
 
 4. Velocity distribution (veldists.py)
 Velocity distributions should be saved as .dat files in the velocity_distributions folder. They should be given as the total velocity integral computed as a function of minimum velocity. These can then be read in with an associated DM density. See the rate_calc document for a more detailed explanation of the format of these distributions, and references to the distributions defined below.
