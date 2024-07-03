@@ -1,6 +1,7 @@
 from dmmodel import DMModel
 import numpy as np
 from constants import *
+import math
 
 ### Class definition for standard SI WIMP.
 #### Note that this is the "blueprint" for DM models defined with NREFT. You should be able to just take this and switch out the FF terms
@@ -32,6 +33,23 @@ class SIWIMP(DMModel):
         dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
         vm = self.vmin(Target,mX,ER)
         return exposure*cpd_conversion_new*Target.N_T()*(VelDist.rho*1e9/mX)*dsigdER*VelDist.gdist(vm)/((mp+mX)**2)
+
+
+    def dRdER_New(self,Target,ER,mX,VelDist,cp,cn):
+        exposure = 612 #kg days
+        NA=6.022e26
+        ev2Day=1.314e20
+        cm2eV=5.06e4
+        ABar= 0.205*70 + 0.274*72 + 0.0776*73 + 0.365*74 + 0.0775*76
+        FF = Target.F11(ER,cp,cn)
+        dsigdER = FF*Target.mT() *NA/(32*math.pi*mX**3 *mp**2 *ABar)
+        vm = self.vmin(Target,mX,ER)
+        return exposure*ev2Day*(VelDist.rho*1e9/(cm2eV**3))*dsigdER*VelDist.gdist(vm)
+
+        
+
+
+
 
 
 ######################################################
