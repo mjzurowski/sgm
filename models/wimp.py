@@ -13,9 +13,9 @@ class SIWIMP(DMModel):
 
        Output units: [km/s]
        """
-       return (c*1.E-3)*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,sig,VelDist):
+    def dRdER(self,Target,ER,mX,sig,VelDist,cp,cn):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -24,11 +24,14 @@ class SIWIMP(DMModel):
 
         Output units: [cm^2]/[eV] 
         """
-        FF = Target.F11(ER,1/np.sqrt(2),1/np.sqrt(2)) ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
+        exposure = 612 #kg days
+        #cpd_conversion_new = 2.597e-10
+        cpd_conversion_new = 1014247.1936227841 # takes into account ev2Day# (1/cm2ev^3)
+        FF = Target.F11(ER,cp,cn) ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
         cross_sec = sig*2 ## as we normalise the nucleon vector [cn, cp] our built in cross section is sigma_N. Multiply by 2 to get this from sigma_p (which is generally assumed to be the input)
         dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
         vm = self.vmin(Target,mX,ER)
-        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
+        return exposure*cpd_conversion_new*Target.N_T()*(VelDist.rho*1e9/mX)*dsigdER*VelDist.gdist(vm)/((mp+mX)**2)
 
 
 ######################################################
