@@ -39,12 +39,13 @@ class SIWIMP(DMModel):
         exposure = 612 #kg days
         NA=6.022e26
         ev2Day=1.314e20
+        kev2Day=1.314e23
         cm2eV=5.06e4
         ABar= 0.205*70 + 0.274*72 + 0.0776*73 + 0.365*74 + 0.0775*76
         FF = Target.F11(ER,cp,cn)
         dsigdER = FF*Target.mT() *NA/(32*math.pi*mX**3 *mp**2 *ABar)
         vm = self.vmin(Target,mX,ER)
-        return exposure*ev2Day*(VelDist.rho*1e9/(cm2eV**3))*dsigdER*VelDist.gdist(vm)
+        return exposure*kev2Day*(VelDist.rho*1e9/(cm2eV**3))*dsigdER*VelDist.gdist(vm)
 
         
 
