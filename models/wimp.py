@@ -82,10 +82,13 @@ class WIMPall(DMModel):
         #FF13
         #FF45
         FF46 = Target.F46(ER,c4(p,Coeff,mX,Lambda,mp),c4(n,Coeff,mX,Lambda,mp),c6(p,Coeff,mX,Lambda,mp),c6(n,Coeff,mX,Lambda,mp),jx)
+        FF64 = Target.F64(ER,c6(p,Coeff,mX,Lambda,mp),c6(n,Coeff,mX,Lambda,mp),c4(p,Coeff,mX,Lambda,mp),c4(n,Coeff,mX,Lambda,mp),jx)
         FF98 = Target.F98(ER,c9(p,Coeff,mX,Lambda,mp),c9(n,Coeff,mX,Lambda,mp),c8(p,Coeff,mX,Lambda,mp),c8(n,Coeff,mX,Lambda,mp),jx)
+        FF89 = Target.F89(ER,c8(p,Coeff,mX,Lambda,mp),c8(n,Coeff,mX,Lambda,mp),c9(p,Coeff,mX,Lambda,mp),c9(n,Coeff,mX,Lambda,mp),jx)
         FF1112 = Target.F1112(ER,c11(p,Coeff,mX,Lambda,mp),c11(n,Coeff,mX,Lambda,mp),c12(p,Coeff,mX,Lambda,mp),c12(n,Coeff,mX,Lambda,mp),jx)
+        FF1211 = Target.F1211(ER,c12(p,Coeff,mX,Lambda,mp),c12(n,Coeff,mX,Lambda,mp),c11(p,Coeff,mX,Lambda,mp),c11(n,Coeff,mX,Lambda,mp),jx)
         dsigdER = Target.mT() *NA/(32*math.pi*mX**3 *mp**2 *ABar)
-        return exposure*kev2Day*(VelDist.rho*1e9/(cm2eV**3))*dsigdER*((FF11+FF44+FF66+FF77[0]+FF88[0]+FF99+FF1010+FF1111+FF1212[0]+FF46+FF98+FF1112)*VelDist.gdist(vm) + (FF77[1]+FF88[1]+FF1212[1])*VelDist.hdist(vm))
+        return exposure*kev2Day*(VelDist.rho*1e9/(cm2eV**3))*dsigdER*((FF11+FF44+FF66+FF77[0]+FF88[0]+FF99+FF1010+FF1111+FF1212[0]+FF46+FF64+FF98+FF89+FF1112+FF1211)*VelDist.gdist(vm) + (FF77[1]+FF88[1]+FF1212[1])*VelDist.hdist(vm))
       
 
 
