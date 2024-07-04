@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from constants import *
-from sympy import symbols
+#from sympy import symbols
 import math
 
 
@@ -453,6 +453,17 @@ class Target(ABC):
         n_n = cn4*cn6*self.FS2nn(ER)
         return self.spin_dep(jx)*np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/16  #units=ev^2
 
+    def F64(self,ER,cp6,cn6,cp4,cn4,jx):
+        """
+        O6,4 operator, depends on DM spin - compared to O4,6 the pn and np terms are swapped
+        """
+        p_p = cp6*cp4*self.FS2pp(ER)
+        p_n = cp6*cn4*self.FS2np(ER)
+        n_p = cn6*cp4*self.FS2pn(ER)
+        n_n = cn6*cn4*self.FS2nn(ER)
+        return self.spin_dep(jx)*np.power(self.Q(ER),2.)*(p_p+p_n+n_p+n_n)/16  #units=ev^2
+
+    
 #double check 9,8 and the order of the S1 D form factor
     def F98(self,ER,cp9,cn9,cp8,cn8,jx):
         """
@@ -462,6 +473,16 @@ class Target(ABC):
         p_n = cp9*cn8*self.FS1Dpn(ER)
         n_p = cn9*cp8*self.FS1Dnp(ER)
         n_n = cn9*cn8*self.FS1Dnn(ER)
+        return self.spin_dep(jx)*np.power(self.Q(ER)/math.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8   #units=ev
+        
+    def F89(self,ER,cp8,cn8,cp9,cn9,jx):
+        """
+        O8,9 operator, depends on DM spin - compared to O9,8 the pn and np terms are swapped
+        """
+        p_p = cp8*cp9*self.FS1Dpp(ER)
+        p_n = cp8*cn9*self.FS1Dnp(ER)
+        n_p = cn8*cp9*self.FS1Dpn(ER)
+        n_n = cn8*cn9*self.FS1Dnn(ER)
         return self.spin_dep(jx)*np.power(self.Q(ER)/math.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8   #units=ev
 
 
@@ -473,6 +494,16 @@ class Target(ABC):
         p_n = cp11*cn12*self.FMPhi2pn(ER)
         n_p = cn11*cp12*self.FMPhi2np(ER)
         n_n = cn11*cn12*self.FMPhi2nn(ER)
+        return -self.spin_dep(jx)*np.power(self.Q(ER)/math.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8   #units=ev
+
+    def F1211(self,ER,cp12,cn12,cp11,cn11,jx):
+        """
+        O12,11 operator, depends on DM spin - compared to O11,12 the pn and np terms are swapped
+        """
+        p_p = cp12*cp11*self.FMPhi2pp(ER)
+        p_n = cp12*cn11*self.FMPhi2np(ER)
+        n_p = cn12*cp11*self.FMPhi2pn(ER)
+        n_n = cn12*cn11*self.FMPhi2nn(ER)
         return -self.spin_dep(jx)*np.power(self.Q(ER)/math.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8   #units=ev
 
 
