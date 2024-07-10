@@ -6,7 +6,7 @@ from constants import *
 
 class DAMA(Detector):
     def Nuclei(self):
-        return [Na(),I()]
+        return [[Na(),1],[I(),1]]
     
     def ER_E(self,E):
         """

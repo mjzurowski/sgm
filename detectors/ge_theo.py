@@ -17,7 +17,7 @@ class Ge(Detector):
         self.ge76 = Ge76(shell_model)
 
     def Nuclei(self):
-        return [self.ge70, self.ge72, self.ge73, self.ge74, self.ge76]
+        return [[self.ge70,0.205], [self.ge72,0.274], [self.ge73,0.0776], [self.ge74,0.365], [self.ge76,0.0775]]
     
     def ER_E(self,E):
         """
@@ -33,9 +33,7 @@ class Ge(Detector):
 
         Output derivative of ER wrt E_obs, units [keV]/[keV_0]
         """
-        # Here we account for their abundance fraction. We want to scale kg of isotope per kg of material
-        A_av = 0.205*self.ge70.A()+0.274*self.ge72.A()+0.0776*self.ge73.A()+0.365*self.ge74.A()+0.0775*self.ge76.A() # get the average mass number
-        return [0.205*self.ge70.A()/A_av,0.274*self.ge72.A()/A_av,0.0776*self.ge73.A()/A_av,0.365*self.ge74.A()/A_av,0.0775*self.ge76.A()/A_av] # interpolate derivative at the value we want 
+        return np.ones(len(self.Nuclei())) # interpolate derivative at the value we want 
     
     def ROI(self):
         return [0,100]

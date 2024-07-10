@@ -8,7 +8,7 @@ joo_qf = np.loadtxt("./detectors/na_qfs/joo.dat")  ## list of E_NR as a function
 
 class COSINE(Detector):
     def Nuclei(self):
-        return [Na(),I()]
+        return [[Na(),1],[I(),1]]
     
     def ER_E(self,E):
         """

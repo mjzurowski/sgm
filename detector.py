@@ -11,7 +11,7 @@ class Detector(ABC):
     def Nuclei(self):
         """
         Give a list of the target nuclei that make up the detector
-        This should be a list of Target objects.
+        Each entry should be a Target objects with its abundance in moles per mole of target material
         """
         pass
 
@@ -21,7 +21,7 @@ class Detector(ABC):
         """
         mass = 0
         for N in self.Nuclei():
-            mass+=N.mT()
+            mass+=N[0].A()*N[1] # mass number*abundance 
         return mass
 
     @abstractmethod
@@ -57,14 +57,14 @@ class Detector(ABC):
         if NR:
             for i in range(0,len(self.Nuclei())):
                 ER = self.ER_E(E)[i] # energy conversion for this nucleus
-                T = self.Nuclei()[i] # target object for computing DM rate
+                T = self.Nuclei()[i][0] # target object for computing DM rate
                 dERdE = self.dERdE(E)[i]
-                TotalRate+=dERdE*float(Func(T,ER,**kwargs))*T.mT()/self.DetMass()
+                TotalRate+=dERdE*float(Func(T,ER,**kwargs))*T.A()*self.Nuclei()[i][1]/self.DetMass()
         else:
             for i in range(0,len(self.Nuclei())):
                 ER = E*keV
-                T = self.Nuclei()[i] # target object for computing DM rate
-                TotalRate+=float(Func(T,ER,**kwargs))*T.mT()/self.DetMass()
+                T = self.Nuclei()[i][0] # target object for computing DM rate
+                TotalRate+=float(Func(T,ER,**kwargs))*T.A()*self.Nuclei()[i][1]/self.DetMass()
         return TotalRate
 
 ### General detector terms
@@ -118,7 +118,7 @@ class Detector(ABC):
         for i in range(0,len(E)):
             s=0
             for j in range(1,len(rate_arr)):
-                s+=0.5*(rate_arr[j-1][i] + rate_arr[j][i])
+                s+=0.5*(rate_arr[j-1][i] + rate_arr[j][i])*DE
             res.append(s)
         return res
 

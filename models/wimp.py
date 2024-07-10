@@ -60,6 +60,116 @@ class WIMPO3(DMModel):
         return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
 
 
+class CirelliF11(DMModel):
+    def vmin(self,Target,mX,ER):
+       """
+       [mX] = [eV] DM mass
+       [ER] = [eV] DM recoil energy
+
+       Output units: [km/s]
+       """
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+    
+    def dRdER(self,Target,ER,mX,lam,VelDist):
+        """
+        For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
+        [mX] = [eV] DM mass
+        [ER] = [eV] DM recoil energy
+        [lam] = [eV] new physics scale
+
+        Output units: cpd/kg/keV
+        """
+        vm = self.vmin(Target,mX,ER)
+        cn_NR = 4*mX*mp*mp*0.433/pow(lam,3) # NR EFT coupling assuming EFT cn = 0.433/pow(lam*keV,3)
+        cp_NR = 4*mX*mp*mp*0.3754/pow(lam,3) # NR EFT coupling assuming EFT cp = 0.3754/pow(lam*keV,3)
+        FF = Target.F11(ER,cp_NR,cn_NR) ## form factor with couplings. Note that proton and neutron couplings are normalised to 1. vmin needs to be unitless
+        
+        dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 ## units of 1/[eV]3, Cirelli cross section expression
+        vm = self.vmin(Target,mX,ER)
+        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
+    
+class CirelliF66(DMModel):
+    def vmin(self,Target,mX,ER):
+       """
+       [mX] = [eV] DM mass
+       [ER] = [eV] DM recoil energy
+
+       Output units: [km/s]
+       """
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+    
+    def dRdER(self,Target,ER,mX,lam,VelDist):
+        """
+        For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
+        [mX] = [eV] DM mass
+        [ER] = [eV] DM recoil energy
+        [lam] = [eV] new physics scale
+
+        Output units: cpd/kg/keV
+        """
+        vm = self.vmin(Target,mX,ER)
+        cp_NR = -4*1.91E-24
+        cn_NR = 4*3.59E-25
+        FF = pow(mp,4)*Target.F66(ER,cp_NR,cn_NR,0.5) ## form factor with couplings. Note that proton and neutron couplings are normalised to 1. vmin needs to be unitless
+        
+        dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 ## units of 1/[eV]3, Cirelli cross section expression
+        vm = self.vmin(Target,mX,ER)
+        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
+    
+class AnandF11(DMModel):
+    def vmin(self,Target,mX,ER):
+       """
+       [mX] = [eV] DM mass
+       [ER] = [eV] DM recoil energy
+
+       Output units: [km/s]
+       """
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+    
+    def dRdER(self,Target,ER,mX,sig,VelDist):
+        """
+        For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
+        [mX] = [eV] DM mass
+        [ER] = [eV] DM recoil energy
+        [sig] = [cm]^2 cross section
+
+        Output units: [cm^2]/[eV] 
+        """
+        cp = 0.3754
+        cn = 0.433
+        FF = Target.F11(ER,cp/np.sqrt(cp*cp+cn*cn),cn/np.sqrt(cp*cp+cn*cn)) ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
+        cross_sec = sig
+        dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
+        vm = self.vmin(Target,mX,ER)
+        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
+
+
+class AnandF66(DMModel):
+    def vmin(self,Target,mX,ER):
+       """
+       [mX] = [eV] DM mass
+       [ER] = [eV] DM recoil energy
+
+       Output units: [km/s]
+       """
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+    
+    def dRdER(self,Target,ER,mX,sig,VelDist):
+        """
+        For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
+        [mX] = [eV] DM mass
+        [ER] = [eV] DM recoil energy
+        [sig] = [cm]^2 cross section
+
+        Output units: [cm^2]/[eV] 
+        """
+        cp = -1.91E-24*mp/mX
+        cn = 3.59E-25*mp/mX
+        FF = Target.F66(ER,cp/np.sqrt(cp*cp+cn*cn),cn/np.sqrt(cp*cp+cn*cn),0.5) ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
+        cross_sec = sig
+        dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
+        vm = self.vmin(Target,mX,ER)
+        return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
 ######################################################
 ### Class definition for standard SI WIMP with Helm form factors
 #### Nore that this is equivalent to NREFT with F11
