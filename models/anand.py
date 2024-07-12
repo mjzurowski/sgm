@@ -20,7 +20,11 @@ class AnandF1(DMModel):
 
     def FF(self, Target, ER):
         """
-        Form factor expression for this model
+        Form factor expression for O1
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp*self.cp*Target.FMpp(ER)
         p_n = self.cp*self.cn*Target.FMpn(ER)
@@ -69,7 +73,12 @@ class AnandF3(DMModel):
 
     def FF(self, Target, ER,vm):
         """
-        Form factor expression for this model
+        Form factor expression for O3
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+        [vm] = [unitless] minimun velocity for recoil of ER
+
+        Output units: unitless
         """
         h_p_p = self.cp*self.cp*Target.FS1pp(ER)
         h_p_n = self.cp*self.cn*Target.FS1pn(ER)
@@ -111,7 +120,7 @@ class AnandF3(DMModel):
             FF = self.FF(Target,ER,vm/kms)
             cross_sec = sig 
             dsigdER_g = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
-            dsigdER_h = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
+            dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
 
@@ -128,7 +137,11 @@ class AnandF4(DMModel):
 
     def FF(self, Target, ER):
         """
-        Form factor expression for this model
+        Form factor expression for O4
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp*self.cp*(Target.FS1pp(ER)+Target.FS2pp(ER))
         p_n = self.cp*self.cn*(Target.FS1pn(ER)+Target.FS2pn(ER))
@@ -178,7 +191,12 @@ class AnandF5(DMModel):
 
     def FF(self, Target, ER, vm):
         """
-        Form factor expression for this model
+        Form factor expression for O5
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+        [vm] = [unitless] minimun velocity for recoil of ER
+
+        Output units: unitless
         """
         h_p_p = self.cp*self.cp*Target.FMpp(ER)
         h_p_n = self.cp*self.cn*Target.FMpn(ER)
@@ -220,7 +238,7 @@ class AnandF5(DMModel):
             FF = self.FF(Target, ER, vm/kms)
             cross_sec = sig 
             dsigdER_g = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
-            dsigdER_h = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
+            dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
 
@@ -237,7 +255,11 @@ class AnandF6(DMModel):
 
     def FF(self, Target, ER):
         """
-        Form factor expression for this model
+        Form factor expression for O6
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp*self.cp*(Target.FS2pp(ER))
         p_n = self.cp*self.cn*(Target.FS2pn(ER))
@@ -287,10 +309,12 @@ class AnandF7(DMModel):
 
     def FF(self,Target,ER,vm):
         """
-        O7,7 operator, depends on DM spin
-        cn and cp both couplings between relevant nucleon and O7 operator
-        Annoyingly, this FF has both g and h depedence, so lets return a list
-        Also depends on the min velocity of the DM
+        Form factor expression for O7
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+        [vm] = [unitless] minimun velocity for recoil of ER
+
+        Output units: unitless
         """
         p_p = self.cp*self.cp*Target.FS1pp(ER)
         p_n = self.cp*self.cn*Target.FS1pn(ER)
@@ -328,7 +352,7 @@ class AnandF7(DMModel):
             FF = self.FF(Target,ER,vm/kms)
             cross_sec = sig 
             dsigdER_g = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
-            dsigdER_h = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
+            dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
 
@@ -345,10 +369,12 @@ class AnandF8(DMModel):
 
     def FF(self,Target,ER,vm):
         """
-        O7,7 operator, depends on DM spin
-        cn and cp both couplings between relevant nucleon and O7 operator
-        Annoyingly, this FF has both g and h depedence, so lets return a list
-        Also depends on the min velocity of the DM
+        Form factor expression for O8
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+        [vm] = [unitless] minimun velocity for recoil of ER
+
+        Output units: unitless
         """
         g_p_p = self.cp*self.cp*(pow(Target.Q(ER)/mp,2)*Target.FDpp(ER)-vm*vm*Target.FMpp(ER))
         g_p_n = self.cp*self.cn*(pow(Target.Q(ER)/mp,2)*Target.FDpn(ER)-vm*vm*Target.FMpn(ER))
@@ -390,7 +416,7 @@ class AnandF8(DMModel):
             FF = self.FF(Target, ER,vm/kms)
             cross_sec = sig 
             dsigdER_g = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
-            dsigdER_h = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
+            dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
 
@@ -407,10 +433,11 @@ class AnandF9(DMModel):
 
     def FF(self,Target,ER):
         """
-        O7,7 operator, depends on DM spin
-        cn and cp both couplings between relevant nucleon and O7 operator
-        Annoyingly, this FF has both g and h depedence, so lets return a list
-        Also depends on the min velocity of the DM
+        Form factor expression for O9
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp*self.cp*Target.FS1pp(ER)
         p_n = self.cp*self.cn*Target.FS1pn(ER)
@@ -460,10 +487,11 @@ class AnandF10(DMModel):
 
     def FF(self,Target,ER):
         """
-        O7,7 operator, depends on DM spin
-        cn and cp both couplings between relevant nucleon and O7 operator
-        Annoyingly, this FF has both g and h depedence, so lets return a list
-        Also depends on the min velocity of the DM
+        Form factor expression for O10
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp*self.cp*Target.FS2pp(ER)
         p_n = self.cp*self.cn*Target.FS2pn(ER)
@@ -514,7 +542,11 @@ class AnandF11(DMModel):
 
     def FF(self, Target, ER):
         """
-        Form factor expression for this model
+        Form factor expression for O11
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp*self.cp*Target.FMpp(ER)
         p_n = self.cp*self.cn*Target.FMpn(ER)
@@ -563,10 +595,13 @@ class AnandF12(DMModel):
 
     def FF(self,Target,ER,vm): 
         """
-        Defining O12,12 based on form factors
-        cn and cp both couplings between relevant nucleon and O1 operator
+        Form factor expression for O12
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+        [vm] = [unitless] minimun velocity for recoil of ER
+
+        Output units: unitless
         """
-        
         h_p_p = self.cp*self.cp*(Target.FS1pp(ER)/2 + Target.FS2pp(ER))
         h_p_n = self.cp*self.cn*(Target.FS1pn(ER)/2 + Target.FS2pn(ER))
         h_n_p = self.cn*self.cp*(Target.FS1np(ER)/2 + Target.FS2np(ER))
@@ -607,24 +642,25 @@ class AnandF12(DMModel):
             FF = self.FF(Target,ER,vm/kms)
             cross_sec = sig 
             dsigdER_g = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
-            dsigdER_h = cross_sec*FF[0]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
+            dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
 ###### Need to double check units and signs for these       
 class AnandF1F3(DMModel):
-    def __init__(self, c1p, c1n, c3p, c3n):
-        """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
-        """
-        c0 = np.sqrt(c1p**2 + c1n**2 + c3p**2 + c3n**2)
-        self.c1p = c1p/c0
-        self.c1n = c1n/c0
-        self.c3p = c3p/c0
-        self.c3n = c3n/c0
+    def __init__(self, cp1, cn1, cp3, cn3):
+        c0 = np.sqrt(cp1**2 + cn1**2 + cp3**2 + cn3**2)
+        self.cp1 = cp1/c0
+        self.cn1 = cn1/c0
+        self.cp3 = cp3/c0
+        self.cn3 = cn3/c0
 
     def FF(self, Target, ER):
         """
-        O1,3 operator, depends on DM spin
+        Form factor expression for interference of O1 and O3
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp1*self.cp3*Target.FMPhi2pp(ER)
         p_n = self.cp1*self.cn3*Target.FMPhi2pn(ER)
@@ -662,20 +698,24 @@ class AnandF1F3(DMModel):
         
 
 class AnandF4F5(DMModel):
-    def __init__(self, c4p, c4n, c5p, c5n, jx):
+    def __init__(self, cp4, cn4, cp5, cn5, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
         """
-        c0 = np.sqrt(c4p**2 + c4n**2 + c5p**2 + c5n**2)
-        self.c4p = c4p/c0
-        self.c4n = c4n/c0
-        self.c5p = c5p/c0
-        self.c5n = c5n/c0
+        c0 = np.sqrt(cp4**2 + cn4**2 + cp5**2 + cn5**2)
+        self.cp4 = cp4/c0
+        self.cn4 = cn4/c0
+        self.cp5 = cp5/c0
+        self.cn5 = cn5/c0
         self.jx = jx
 
     def FF(self, Target, ER):
         """
-        O4,5 operator, depends on DM spin
+        Form factor expression for interference of O4 and O5
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp4*self.cp5*Target.FS1Dpp(ER)
         p_n = self.cp4*self.cn5*Target.FS1Dpn(ER)
@@ -713,20 +753,24 @@ class AnandF4F5(DMModel):
         
 
 class AnandF4F6(DMModel):
-    def __init__(self, c4p, c4n, c6p, c6n, jx):
+    def __init__(self, cp4, cn4, cp6, cn6, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
         """
-        c0 = np.sqrt(c4p**2 + c4n**2 + c6p**2 + c6n**2)
-        self.c4p = c4p/c0
-        self.c4n = c4n/c0
-        self.c6p = c6p/c0
-        self.c6n = c6n/c0
+        c0 = np.sqrt(cp4**2 + cn4**2 + cp6**2 + cn6**2)
+        self.cp4 = cp4/c0
+        self.cn4 = cn4/c0
+        self.cp6 = cp6/c0
+        self.cn6 = cn6/c0
         self.jx = jx
 
     def FF(self, Target, ER):
         """
-        O4,5 operator, depends on DM spin
+        Form factor expression for interference of O4 and O5
+        Target = Target type object
+        [ER] = [eV] DM recoil energy
+
+        Output units: unitless
         """
         p_p = self.cp4*self.cp6*Target.FS2pp(ER)
         p_n = self.cp4*self.cn6*Target.FS2pn(ER)
