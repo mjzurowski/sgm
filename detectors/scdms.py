@@ -68,7 +68,7 @@ class GeHV(Detector):
         return np.interp(E*keV,self.E_samp,deriv)*np.ones(len(self.Nuclei())) # account for both the derivation, and the kg of each isotope per kg of Ge
     
     def ROI(self):
-        return [0,10]
+        return [0.7,10]
     
     def Emax(self):
         return 20
@@ -76,9 +76,9 @@ class GeHV(Detector):
     def DeltaE(self,E):
         # Lets assume CDMSlite values: arxiv 1911.11905. These are for a Ge iZIP, so we'll at least adjust the baseline res to what we hope for
         A = 5E-3
-        B = 0.7 
-        sig_E = 10
-        return np.sqrt(B*E/keV+pow(A*E/keV,2)+pow(sig_E/keV,2)) # these resolutions are defined for eV so need to convert to keV for comp of DeltaE
+        B = 0.7/keV # 0.7 eV
+        sig_E = 10/keV # 10 eV
+        return np.sqrt(B*E+pow(A*E,2)+pow(sig_E,2)) # these resolutions are defined for eV so need to convert to keV for comp of DeltaE
     
     def Res(self,E1,E2):
         # We assume E1 is the observed energy (E' in accompanying documentation) and E2 is the energy that will be integrated over (E_ee in accompanying documentation)
@@ -86,7 +86,7 @@ class GeHV(Detector):
         return A*np.exp(-0.5*pow((E1 - E2)/self.DeltaE(E2), 2.))
     
     def Eff(self,E):
-        return np.where(E>0.15,0.8,0.8*E/0.15) 
+        return 0.85
     
 class SiHV(Detector):
     def __init__(self, volt, shell_model="Fitz"):
@@ -125,7 +125,7 @@ class SiHV(Detector):
         return np.interp(E*keV,self.E_samp,deriv)*np.ones(len(self.Nuclei()))
     
     def ROI(self):
-        return [0,10]
+        return [0.35,10]
     
     def Emax(self):
         return 20
@@ -133,9 +133,9 @@ class SiHV(Detector):
     def DeltaE(self,E):
         # Lets assume CDMSlite values: arxiv 1911.11905. These are for a Ge iZIP, so we'll at least adjust the baseline res to what we hope for
         A = 5E-3
-        B = 0.7 
-        sig_E = 5
-        return np.sqrt(B*E/keV+pow(A*E/keV,2)+pow(sig_E/keV,2)) # these resolutions are defined for eV so need to convert to keV for comp of DeltaE
+        B = 0.7/keV
+        sig_E = 5/keV
+        return np.sqrt(B*E+pow(A*E,2)+pow(sig_E,2)) # these resolutions are defined for eV so need to convert to keV for comp of DeltaE
     
     def Res(self,E1,E2):
         # We assume E1 is the observed energy (E' in accompanying documentation) and E2 is the energy that will be integrated over (E_ee in accompanying documentation)
@@ -144,4 +144,4 @@ class SiHV(Detector):
     
     def Eff(self,E):
         # Taken from eyeballing the CDMS Soudan data - should be improved
-        return np.where(E>0.15,0.8,0.8*E/0.15) 
+        return 0.85
