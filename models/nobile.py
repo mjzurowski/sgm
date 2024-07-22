@@ -8,13 +8,6 @@ Class defintions for all the DM form factors, following the Nobile formalism
 These models are for use where you want to plot/constrain a new physics scale
 """
 
-######## NOTE TO SELF!
-# Still need to compute a cross section properly for these
-# Actually... the real high energy way to do it would be to pass the quark couplings.
-# I.e., absorb the functions Raghda has worked on to compute the NR couplings given quark level...
-# these functions are very much a work in progress.
-
-
 class NobileF1(DMModel):
     def __init__(self, cp, cn):
         """

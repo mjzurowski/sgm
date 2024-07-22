@@ -15,8 +15,7 @@ class AnandF1(DMModel):
         """
         self.cp = cp/np.sqrt(cp*cp+cn*cn)
         self.cn = cn/np.sqrt(cp*cp+cn*cn)
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
+        
 
     def FF(self, Target, ER):
         """
