@@ -1,29 +1,34 @@
 from dmmodel import DMModel
 import numpy as np
 from constants import *
+from models.couplings import *
 
 """
 Class defintions for all the DM form factors, following the Nobile formalism 
 (i.e., unitful form factors as per arxiv 2104.12785)
-These models are for use where you want to plot/constrain a new physics scale
+These models are for use where you want to plot/constrain a new physics scale.
+NB: not all of the NR operators correspond to a relativistic equivalent. We include them here for completeness, and allow the user to specify their own couplings.
 """
 
 class NobileF1(DMModel):
-    def __init__(self, cp, cn):
+    def __init__(self, cq):
         """
-        Initialise with a set of cp and cn values
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
+        self.c1 = c1_N(cq)
+        self.c5 = c5_N(cq)
 
-    def FF(self, Target, ER):
+    def FF(self, Target, ER, mX, Lambda):
         """
         Form factor expression for O1
+        Output units: unitless
         """
-        p_p = self.cp*self.cp*Target.FMpp(ER)
-        p_n = self.cp*self.cn*Target.FMpn(ER)
-        n_p = self.cn*self.cp*Target.FMnp(ER)
-        n_n = self.cn*self.cn*Target.FMnn(ER)
+        cp = 4*mp*mX*(self.c1[0]/pow(Lambda,3)+self.c5[0]/pow(Lambda,2))
+        cn = 4*mp*mX*(self.c1[1]/pow(Lambda,3)+self.c5[1]/pow(Lambda,2))
+        p_p = cp*cp*Target.FMpp(ER)
+        p_n = cp*cn*Target.FMpn(ER)
+        n_p = cn*cp*Target.FMnp(ER)
+        n_n = cn*cn*Target.FMnn(ER)
         return p_p+p_n+n_p+n_n
 
     def vmin(self,Target,mX,ER):
@@ -35,7 +40,7 @@ class NobileF1(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -43,20 +48,21 @@ class NobileF1(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c1==self.c5==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
-            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target,ER,mX,Lambda)
+            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
 
 
 class NobileF3(DMModel):
     def __init__(self, cp, cn):
         """
-        Initialise with a set of cp and cn values
+        Initialise with a set of cp and cn values.
+        The NR operator 3 has no high energy equivalent, so allow these to be defined manually
         """
         self.cp = cp
         self.cn = cn
@@ -108,22 +114,25 @@ class NobileF3(DMModel):
         
 
 class NobileF4(DMModel):
-    def __init__(self, cp, cn,jx):
+    def __init__(self, cq, jx):
         """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
+        self.c8 = c8_N(cq)
+        self.c9 = c9_N(cq)
         self.jx = jx
 
-    def FF(self, Target, ER):
+    def FF(self, Target, ER, mX, Lambda):
         """
         Form factor expression for O4
+        Output units: unitless
         """
-        p_p = self.cp*self.cp*(Target.FS1pp(ER)+Target.FS2pp(ER))
-        p_n = self.cp*self.cn*(Target.FS1pn(ER)+Target.FS2pn(ER))
-        n_p = self.cn*self.cp*(Target.FS1np(ER)+Target.FS2np(ER))
-        n_n = self.cn*self.cn*(Target.FS1nn(ER)+Target.FS2nn(ER))
+        cp = 16*mp*mX*(2*self.c9[0]-self.c8[0])/pow(Lambda,2)
+        cn = 16*mp*mX*(2*self.c9[1]-self.c8[1])/pow(Lambda,2)
+        p_p = cp*cp*(Target.FS1pp(ER)+Target.FS2pp(ER))
+        p_n = cp*cn*(Target.FS1pn(ER)+Target.FS2pn(ER))
+        n_p = cn*cp*(Target.FS1np(ER)+Target.FS2np(ER))
+        n_n = cn*cn*(Target.FS1nn(ER)+Target.FS2nn(ER))
 
         return Target.spin_dep(self.jx)*(p_p+p_n+n_p+n_n)/16
     
@@ -136,7 +145,7 @@ class NobileF4(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -144,25 +153,24 @@ class NobileF4(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c8==self.c9==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target, ER)
-            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target, ER, mX, Lambda)
+            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 class NobileF5(DMModel):
     def __init__(self, cp, cn, jx):
         """
         Initialise with a set of cp and cn values
+        The NR operator 3 has no high energy equivalent, so allow these to be defined manually
         """
         self.cp = cp
         self.cn = cn
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
     def FF(self, Target, ER, vm):
         """
@@ -211,24 +219,27 @@ class NobileF5(DMModel):
         
 
 class NobileF6(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cq, jx):
         """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
+        self.c4 = c4_N(cq)
         self.jx = jx
 
-    def FF(self, Target, ER):
+    def FF(self, Target, ER, Lambda):
         """
         Form factor expression for O6
-        """
-        p_p = self.cp*self.cp*(Target.FS2pp(ER))
-        p_n = self.cp*self.cn*(Target.FS2pn(ER))
-        n_p = self.cn*self.cp*(Target.FS2np(ER))
-        n_n = self.cn*self.cn*(Target.FS2nn(ER))
 
-        return Target.spin_dep(self.jx)*np.power(Target.Q(ER),4.)*(p_p+p_n+n_p+n_n)/16 # units = eV^4
+        Output units: unitless
+        """
+        cp = 4*self.c4[0]/pow(Lambda,3)
+        cn = 4*self.c4[1]/pow(Lambda,3)
+        p_p = cp*cp*(Target.FS2pp(ER))
+        p_n = cp*cn*(Target.FS2pn(ER))
+        n_p = cn*cp*(Target.FS2np(ER))
+        n_n = cn*cn*(Target.FS2nn(ER))
+
+        return Target.spin_dep(self.jx)*np.power(Target.Q(ER),4.)*(p_p+p_n+n_p+n_n)/16
 
     def vmin(self,Target,mX,ER):
        """
@@ -239,7 +250,7 @@ class NobileF6(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -247,34 +258,33 @@ class NobileF6(DMModel):
 
         Output units: [cm^2]/[eV] 
         """
-        if(self.cn==self.cp==0):
+        if(self.c4==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
-            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target,ER,Lambda)
+            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
 class NobileF7(DMModel):
-    def __init__(self, cp, cn):
+    def __init__(self, cq):
         """
-        Initialise with a set of cp and cn values
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
+        self.c7 = c7_N(cq)
 
-    def FF(self,Target,ER,vm):
+    def FF(self,Target,ER,vm,mX,Lambda):
         """
         Form factor expression for O7
         """
-        p_p = self.cp*self.cp*Target.FS1pp(ER)
-        p_n = self.cp*self.cn*Target.FS1pn(ER)
-        n_p = self.cn*self.cp*Target.FS1np(ER)
-        n_n = self.cn*self.cn*Target.FS1nn(ER)
+        cp = -8*mp*mX*self.c7[0]/pow(Lambda,2)
+        cn = -8*mp*mX*self.c7[1]/pow(Lambda,2)
+        p_p = cp*cp*Target.FS1pp(ER)
+        p_n = cp*cn*Target.FS1pn(ER)
+        n_p = cn*cp*Target.FS1np(ER)
+        n_n = cn*cn*Target.FS1nn(ER)
 
         h = (p_p+p_n+n_p+n_n)/8
         g = -vm*vm(p_p+p_n+n_p+n_n)/8
@@ -290,7 +300,7 @@ class NobileF7(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -298,42 +308,44 @@ class NobileF7(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c7==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER,vm/kms)
-            dsigdER_g = FF[0]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
-            dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target,ER,vm/kms,mX,Lambda)
+            dsigdER_g = FF[0]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
+            dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
 
 class NobileF8(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cq, jx):
         """
-        Initialise with a set of cp and cn values
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
+        self.c6 = c6_N(cq)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
-    def FF(self,Target,ER,vm):
+    def FF(self,Target,ER,vm,mX,Lambda):
         """
         Form factor expression for O8
+
+        Output units: unitless
         """
-        g_p_p = self.cp*self.cp*(pow(Target.Q(ER)/mp,2)*Target.FDpp(ER)-vm*vm*Target.FMpp(ER))
-        g_p_n = self.cp*self.cn*(pow(Target.Q(ER)/mp,2)*Target.FDpn(ER)-vm*vm*Target.FMpn(ER))
-        g_n_p = self.cn*self.cp*(pow(Target.Q(ER)/mp,2)*Target.FDnp(ER)-vm*vm*Target.FMnp(ER))
-        g_n_n = self.cn*self.cn*(pow(Target.Q(ER)/mp,2)*Target.FDnn(ER)-vm*vm*Target.FMnn(ER))
+        cp = 8*mp*mX*self.c6[0]/pow(Lambda,2)
+        cn = 8*mp*mX*self.c6[1]/pow(Lambda,2)
+
+        g_p_p = cp*cp*(pow(Target.Q(ER)/mp,2)*Target.FDpp(ER)-vm*vm*Target.FMpp(ER))
+        g_p_n = cp*cn*(pow(Target.Q(ER)/mp,2)*Target.FDpn(ER)-vm*vm*Target.FMpn(ER))
+        g_n_p = cn*cp*(pow(Target.Q(ER)/mp,2)*Target.FDnp(ER)-vm*vm*Target.FMnp(ER))
+        g_n_n = cn*cn*(pow(Target.Q(ER)/mp,2)*Target.FDnn(ER)-vm*vm*Target.FMnn(ER))
         g = 0.25*Target.spin_dep(self.jx)*(g_p_p+g_p_n+g_n_p+g_n_n)
         
-        h_p_p = self.cp*self.cp*Target.FMpp(ER)
-        h_p_n = self.cp*self.cn*Target.FMpn(ER)
-        h_n_p = self.cn*self.cp*Target.FMnp(ER)
-        h_n_n = self.cn*self.cn*Target.FMnn(ER)
+        h_p_p = cp*cp*Target.FMpp(ER)
+        h_p_n = cp*cn*Target.FMpn(ER)
+        h_n_p = cn*cp*Target.FMnp(ER)
+        h_n_n = cn*cn*Target.FMnn(ER)
         h = 0.25*Target.spin_dep(self.jx)*(h_p_p+h_p_n+h_n_p+h_n_n)
 
         return [g,h]
@@ -347,7 +359,7 @@ class NobileF8(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -355,38 +367,40 @@ class NobileF8(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c6==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target, ER,vm/kms)
-            dsigdER_g = FF[0]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
-            dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target, ER,vm/kms,mX,Lambda)
+            dsigdER_g = FF[0]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
+            dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
 
 class NobileF9(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cq, jx):
         """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
+        self.c6 = c6_N(cq)
+        self.c7 = c7_N(cq)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
-    def FF(self,Target,ER):
+    def FF(self,Target,ER,mX,Lambda):
         """
         Form factor expression for O9
-        """
-        p_p = self.cp*self.cp*Target.FS1pp(ER)
-        p_n = self.cp*self.cn*Target.FS1pn(ER)
-        n_p = self.cn*self.cp*Target.FS1np(ER)
-        n_n = self.cn*self.cn*Target.FS1nn(ER)
 
-        return Target.spin_dep(self.jx)*np.power(Target.Q(ER),2.)*(p_p+p_n+n_p+n_n)/16 # units = eV^2
+        Output units: unitless
+        """
+        cp = 8*mX*self.c6[0]/pow(Lambda,2)+8*mp*self.c7[0]/pow(Lambda,2)
+        cn = 8*mX*self.c6[1]/pow(Lambda,2)+8*mp*self.c7[1]/pow(Lambda,2)
+        p_p = cp*cp*Target.FS1pp(ER)
+        p_n = cp*cn*Target.FS1pn(ER)
+        n_p = cn*cp*Target.FS1np(ER)
+        n_n = cn*cn*Target.FS1nn(ER)
+
+        return Target.spin_dep(self.jx)*np.power(Target.Q(ER),2.)*(p_p+p_n+n_p+n_n)/16 
 
     def vmin(self,Target,mX,ER):
        """
@@ -397,7 +411,7 @@ class NobileF9(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -405,36 +419,39 @@ class NobileF9(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c6==self.c7==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
-            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target,ER,mX,Lambda)
+            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
 class NobileF10(DMModel):
-    def __init__(self, cp, cn):
+    def __init__(self, cq):
         """
-        Initialise with a set of cp and cn values
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
+        self.c3 = c3_N(cq)
+        self.c10 = c10_N(cq)
 
-    def FF(self,Target,ER):
+    def FF(self,Target,ER,mX,Lambda):
         """
         Form factor expression for O10
-        """
-        p_p = self.cp*self.cp*Target.FS2pp(ER)
-        p_n = self.cp*self.cn*Target.FS2pn(ER)
-        n_p = self.cn*self.cp*Target.FS2np(ER)
-        n_n = self.cn*self.cn*Target.FS2nn(ER)
 
-        return np.power(Target.Q(ER),2.)*(p_p+p_n+n_p+n_n)/4 # units = eV^2
+        Output units: unitless
+        """
+        cp = 4*mX*self.c3[0]/pow(Lambda,3)-8*mp*self.c10[0]/pow(Lambda,2)
+        cn = 4*mX*self.c3[1]/pow(Lambda,3)-8*mp*self.c10[1]/pow(Lambda,2)
+
+        p_p = cp*cp*Target.FS2pp(ER)
+        p_n = cp*cn*Target.FS2pn(ER)
+        n_p = cn*cp*Target.FS2np(ER)
+        n_n = cn*cn*Target.FS2nn(ER)
+
+        return np.power(Target.Q(ER),2.)*(p_p+p_n+n_p+n_n)/4 
 
     def vmin(self,Target,mX,ER):
        """
@@ -445,7 +462,7 @@ class NobileF10(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -453,36 +470,39 @@ class NobileF10(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c3==self.c10==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
-            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target,ER,mX,Lambda)
+            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
 class NobileF11(DMModel):
-    def __init__(self, cp, cn,jx):
+    def __init__(self, cq, jx):
         """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
+        self.c2 = c2_N(cq)
+        self.c10 = c10_N(cq)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
-    def FF(self, Target, ER):
+    def FF(self, Target, ER, mX, Lambda):
         """
         Form factor expression for O11
+
+        Output units: unitless
         """
-        p_p = self.cp*self.cp*Target.FMpp(ER)
-        p_n = self.cp*self.cn*Target.FMpn(ER)
-        n_p = self.cn*self.cp*Target.FMnp(ER)
-        n_n = self.cn*self.cn*Target.FMnn(ER)
-        return Target.spin_dep(self.jx)*np.power(Target.Q(ER),2.)*(p_p+p_n+n_p+n_n)/4 # units = eV^2
+        cp = -4*mp*self.c2[0]/pow(Lambda,3)+8*mX*self.c10[0]/pow(Lambda,2)
+        cn = -4*mp*self.c2[1]/pow(Lambda,3)+8*mX*self.c10[1]/pow(Lambda,2)
+
+        p_p = cp*cp*Target.FMpp(ER)
+        p_n = cp*cn*Target.FMpn(ER)
+        n_p = cn*cp*Target.FMnp(ER)
+        n_n = cn*cn*Target.FMnn(ER)
+        return Target.spin_dep(self.jx)*np.power(Target.Q(ER),2.)*(p_p+p_n+n_p+n_n)/4 
 
     def vmin(self,Target,mX,ER):
        """
@@ -493,7 +513,7 @@ class NobileF11(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -501,40 +521,42 @@ class NobileF11(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c2==self.c10==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
-            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target,ER,mX,Lambda)
+            dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 class NobileF12(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cq, jx):
         """
-        Initialise with a set of cp and cn values
+        Initialise with a set of quark couplings and define the relativistic ones needed for this model
         """
-        self.cp = cp
-        self.cn = cn
+        self.c10 = c10_N(cq)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
-    def FF(self,Target,ER,vm): 
+    def FF(self,Target,ER,vm,mX,Lambda): 
         """
         Form factor expression for O12
+
+        Output units: unitless
         """
-        h_p_p = self.cp*self.cp*(Target.FS1pp(ER)/2 + Target.FS2pp(ER))
-        h_p_n = self.cp*self.cn*(Target.FS1pn(ER)/2 + Target.FS2pn(ER))
-        h_n_p = self.cn*self.cp*(Target.FS1np(ER)/2 + Target.FS2np(ER))
-        h_n_n = self.cn*self.cn*(Target.FS1nn(ER)/2 + Target.FS2nn(ER))
+        cp = -32*mp*mX*self.c10[0]/pow(Lambda,2)
+        cn = -32*mp*mX*self.c10[1]/pow(Lambda,2)
+
+        h_p_p = cp*cp*(Target.FS1pp(ER)/2 + Target.FS2pp(ER))
+        h_p_n = cp*cn*(Target.FS1pn(ER)/2 + Target.FS2pn(ER))
+        h_n_p = cn*cp*(Target.FS1np(ER)/2 + Target.FS2np(ER))
+        h_n_n = cn*cn*(Target.FS1nn(ER)/2 + Target.FS2nn(ER))
         h = Target.spin_dep(self.jx)*(h_p_p+h_p_n+h_n_p+h_n_n)/16 
 
-        g_p_p = self.cp*self.cp*(np.power(Target.Q(ER)/mp,2.)*(Target.FPhi2pp(ER) + Target.FPhipp(ER))-np.power(vm,2.)*(Target.FS1pp(ER)/2 + Target.FS2pp(ER)))
-        g_p_n = self.cp*self.cn*(np.power(Target.Q(ER)/mp,2.)*(Target.FPhi2pn(ER) + Target.FPhipn(ER))-np.power(vm,2.)*(Target.FS1pn(ER)/2 + Target.FS2pn(ER)))
-        g_n_p = self.cn*self.cp*(np.power(Target.Q(ER)/mp,2.)*(Target.FPhi2np(ER) + Target.FPhinp(ER))-np.power(vm,2.)*(Target.FS1np(ER)/2 + Target.FS2np(ER)))
-        g_n_n = self.cn*self.cn*(np.power(Target.Q(ER)/mp,2.)*(Target.FPhi2nn(ER) + Target.FPhinn(ER))-np.power(vm,2.)*(Target.FS1nn(ER)/2 + Target.FS2nn(ER)))
+        g_p_p = cp*cp*(np.power(Target.Q(ER)/mp,2.)*(Target.FPhi2pp(ER) + Target.FPhipp(ER))-np.power(vm,2.)*(Target.FS1pp(ER)/2 + Target.FS2pp(ER)))
+        g_p_n = cp*cn*(np.power(Target.Q(ER)/mp,2.)*(Target.FPhi2pn(ER) + Target.FPhipn(ER))-np.power(vm,2.)*(Target.FS1pn(ER)/2 + Target.FS2pn(ER)))
+        g_n_p = cn*cp*(np.power(Target.Q(ER)/mp,2.)*(Target.FPhi2np(ER) + Target.FPhinp(ER))-np.power(vm,2.)*(Target.FS1np(ER)/2 + Target.FS2np(ER)))
+        g_n_n = cn*cn*(np.power(Target.Q(ER)/mp,2.)*(Target.FPhi2nn(ER) + Target.FPhinn(ER))-np.power(vm,2.)*(Target.FS1nn(ER)/2 + Target.FS2nn(ER)))
         g = Target.spin_dep(self.jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/16  
 
         return [g,h]
@@ -548,7 +570,7 @@ class NobileF12(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -556,14 +578,14 @@ class NobileF12(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c10==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER,vm/kms)
-            dsigdER_g = FF[0]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
-            dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
+            FF = self.FF(Target,ER,vm/kms,mX,Lambda)
+            dsigdER_g = FF[0]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
+            dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
 
 
@@ -1214,4 +1236,4 @@ class NobileF12F15(DMModel):
             FF = self.FF(Target,ER)
             dsigdER_g = FF[0]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
-            return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
+            return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))

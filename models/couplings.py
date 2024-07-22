@@ -97,18 +97,21 @@ delta = {
 
 ## Define a default dictionary for the quark couplings
 ## Assume we take the value in c_q and multiply by mq/Lambda^3 for 1-4, and 1/Lambda^2 for all others
-c_q = {
-    "c1":0,
-    "c2":0,
-    "c3":0,
-    "c4":0,
-    "c5":0,
-    "c6":0,
-    "c7":0,
-    "c8":0,
-    "c9":0,
-    "c10":0,
-}
+
+def c_q():
+    c_q = {
+        "c1":0,
+        "c2":0,
+        "c3":0,
+        "c4":0,
+        "c5":0,
+        "c6":0,
+        "c7":0,
+        "c8":0,
+        "c9":0,
+        "c10":0,
+    }
+    return c_q
 
 mBar = 1/(1/m_q["u"]+1/m_q["d"]+1/m_q["s"])
 
@@ -257,79 +260,17 @@ def c10_N(cq):
         return [cp,cn]
     
 
-###################################################
-## Non relativistic couplings from Cirelli
-###################################################
-def c1_NR(cq,mX,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: unitless
-    c1 = c1_N(cq)
-    c5 = c5_N(cq)
-    cp = 4*mp*mX*(c1[0]/pow(Lambda,3)+c5[0]/pow(Lambda,2))
-    cn = 4*mp*mX*(c1[1]/pow(Lambda,3)+c5[1]/pow(Lambda,2))
-    return [cp,cn]
-    
-def c4_NR(cq,mX,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: unitless
-    c8 = c8_N(cq)
-    c9 = c9_N(cq)
-    cp = 16*mp*mX*(2*c9[0]-c8[0])/pow(Lambda,2)
-    cn = 16*mp*mX*(2*c9[1]-c8[1])/pow(Lambda,2)
-    return [cp,cn]
-
-def c6_NR(cq,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: [eV]^-2
-    return [4*c4/pow(Lambda,3) for c4 in c4_N(cq)]
-
-def c7_NR(cq,mX,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: unitless
-    return [-8*mp*mX*c7/pow(Lambda,2) for c7 in c7_N(cq)]
-
-def c8_NR(cq,mX,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: unitless
-    return [8*mp*mX*c6/pow(Lambda,2) for c6 in c6_N(cq)]
-
-def c9_NR(cq,mX,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: [eV]^-1
-    c6 = c6_N(cq)
-    c7 = c7_N(cq)
-    cp = 8*mX*c6[0]/pow(Lambda,2)+8*mp*c7[0]/pow(Lambda,2)
-    cn = 8*mX*c6[1]/pow(Lambda,2)+8*mp*c7[1]/pow(Lambda,2)
-    return [cp,cn]
-
-def c10_NR(cq,mX,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: [eV]^-1
-    c3 = c3_N(cq)
-    c10 = c10_N(cq)
-    cp = 4*mX*c3[0]/pow(Lambda,3)-8*mp*c10[0]/pow(Lambda,2)
-    cn = 4*mX*c3[1]/pow(Lambda,3)-8*mp*c10[1]/pow(Lambda,2)
-    return [cp,cn]
-
-def c11_NR(cq,mX,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: [eV]^-1
-    c2 = c2_N(cq)
-    c10 = c10_N(cq)
-    cp = -4*mp*c2[0]/pow(Lambda,3)+8*mX*c10[0]/pow(Lambda,2)
-    cn = -4*mp*c2[1]/pow(Lambda,3)+8*mX*c10[1]/pow(Lambda,2)
-    return [cp,cn]
-
-def c12_NR(cq,mX,Lambda):
-    ## Input: dictionary of couplings, DM mass
-    ## Output units: [eV]^-1
-    return [-32*mp*mX*c10/pow(Lambda,2) for c10 in c10_N(cq)]
-
-
 ######################################################################################################
 ## Map the relativistic couplings to a cross section (to give approx measure of interaction strength)
 ######################################################################################################
 def sigma_from_EFT(cq,mX,Lambda):
+    """
+    [cq] = unitless set of active relativistic operators
+    [mX] = [eV] DM mass
+    [Lambda] = [eV] new physics scale
+
+    Output units: [cm]^2
+    """
     c1 = c1_N(cq)
     c2 = c2_N(cq)
     c3 = c3_N(cq)
@@ -364,7 +305,8 @@ def sigma_from_EFT(cq,mX,Lambda):
     c_sq+= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))**2
     ## sum for c11_NR
     c_sq+= (2*c10[0]/pow(Lambda,2)-2*(mp/mX)*c2[0]/pow(Lambda,3))**2
-    c_sq+= (2*c10[1]]/pow(Lambda,2)-2*(mp/mX)*c2[1]/pow(Lambda,3))**2
+    c_sq+= (2*c10[1]/pow(Lambda,2)-2*(mp/mX)*c2[1]/pow(Lambda,3))**2
+    ## compute cross section based on this sum
     sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
     return sig
 
