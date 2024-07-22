@@ -269,7 +269,7 @@ def sigma_from_EFT(cq,mX,Lambda):
     [mX] = [eV] DM mass
     [Lambda] = [eV] new physics scale
 
-    Output units: [cm]^2
+    Output units: [cm]^2 cross section of the nucleon 'vector'
     """
     c1 = c1_N(cq)
     c2 = c2_N(cq)
@@ -310,3 +310,81 @@ def sigma_from_EFT(cq,mX,Lambda):
     sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
     return sig
 
+
+def sigma_p_from_EFT(cq,mX,Lambda):
+    """
+    [cq] = unitless set of active relativistic operators
+    [mX] = [eV] DM mass
+    [Lambda] = [eV] new physics scale
+
+    Output units: [cm]^2 proton-DM cross section 
+    """
+    c1 = c1_N(cq)
+    c2 = c2_N(cq)
+    c3 = c3_N(cq)
+    c4 = c4_N(cq)
+    c5 = c5_N(cq)
+    c6 = c6_N(cq)
+    c7 = c7_N(cq)
+    c8 = c8_N(cq)
+    c9 = c9_N(cq)
+    c10 = c10_N(cq)
+    c_sq = 0 # sum of c^2 values. Will have units of [eV]^-4
+    ## sum for c1_NR
+    c_sq+=(c1[0]/pow(Lambda,3)+c5[0]/pow(Lambda,2))**2
+    ## sum for c4_NR
+    c_sq+=((8*c9[0]-4*c8[0])/pow(Lambda,2))**2
+    ## sum for c6_NR
+    c_sq+=((mp/mX)*c4[0]/pow(Lambda,3))**2
+    ## sum for c7_NR
+    c_sq+=(2*c7[0]/pow(Lambda,2))**2
+    ## sum for c8_NR
+    c_sq+=(2*c6[0]/pow(Lambda,2))**2
+    ## sum for c9_NR
+    c_sq+= (2*c6[0]/pow(Lambda,2)+2*(mp/mX)*c7[0]/pow(Lambda,2))**2
+    ## sum for c10_NR
+    c_sq+= (c3[0]/pow(Lambda,3)-2*(mp/mX)*c10[0]/pow(Lambda,2))**2
+    ## sum for c11_NR
+    c_sq+= (2*c10[0]/pow(Lambda,2)-2*(mp/mX)*c2[0]/pow(Lambda,3))**2
+    ## compute cross section based on this sum
+    sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
+    return sig
+
+def sigma_n_from_EFT(cq,mX,Lambda):
+    """
+    [cq] = unitless set of active relativistic operators
+    [mX] = [eV] DM mass
+    [Lambda] = [eV] new physics scale
+
+    Output units: [cm]^2 neutron-DM cross section 
+    """
+    c1 = c1_N(cq)
+    c2 = c2_N(cq)
+    c3 = c3_N(cq)
+    c4 = c4_N(cq)
+    c5 = c5_N(cq)
+    c6 = c6_N(cq)
+    c7 = c7_N(cq)
+    c8 = c8_N(cq)
+    c9 = c9_N(cq)
+    c10 = c10_N(cq)
+    c_sq = 0 # sum of c^2 values. Will have units of [eV]^-4
+    ## sum for c1_NR
+    c_sq+=(c1[1]/pow(Lambda,3)+c5[1]/pow(Lambda,2))**2
+    ## sum for c4_NR
+    c_sq+=((8*c9[1]-4*c8[1])/pow(Lambda,2))**2
+    ## sum for c6_NR
+    c_sq+=((mp/mX)*c4[1]/pow(Lambda,3))**2
+    ## sum for c7_NR
+    c_sq+=(2*c7[1]/pow(Lambda,2))**2
+    ## sum for c8_NR
+    c_sq+=(2*c6[1]/pow(Lambda,2))**2
+    ## sum for c9_NR
+    c_sq+= (2*c6[1]/pow(Lambda,2)+2*(mp/mX)*c7[1]/pow(Lambda,2))**2
+    ## sum for c10_NR
+    c_sq+= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))**2
+    ## sum for c11_NR
+    c_sq+= (2*c10[1]/pow(Lambda,2)-2*(mp/mX)*c2[1]/pow(Lambda,3))**2
+    ## compute cross section based on this sum
+    sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
+    return sig

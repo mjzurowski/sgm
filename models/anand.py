@@ -9,13 +9,26 @@ These models are for use where you want to plot/constrain an experimental cross 
 """
 
 class AnandF1(DMModel):
-    def __init__(self, cp, cn):
+    def __init__(self, cp, cn,norm="p"):
         """
         Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
-        
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
 
     def FF(self, Target, ER):
         """
@@ -61,14 +74,26 @@ class AnandF1(DMModel):
 
 
 class AnandF3(DMModel):
-    def __init__(self, cp, cn):
+    def __init__(self, cp, cn,norm="p"):
         """
         Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
 
     def FF(self, Target, ER,vm):
         """
@@ -124,15 +149,28 @@ class AnandF3(DMModel):
         
 
 class AnandF4(DMModel):
-    def __init__(self, cp, cn,jx):
+    def __init__(self, cp, cn,jx,norm="p"):
         """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
+        Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
+
 
     def FF(self, Target, ER):
         """
@@ -178,15 +216,27 @@ class AnandF4(DMModel):
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 class AnandF5(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cp, cn, jx,norm="p"):
         """
         Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
     def FF(self, Target, ER, vm):
         """
@@ -242,12 +292,26 @@ class AnandF5(DMModel):
         
 
 class AnandF6(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cp, cn, jx,norm="p"):
         """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
+        Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
         self.jx = jx
         ## ultimately could try and use this to help with the mapping from EFT to exp
         ## eg, normalise them here to allow for a certain cross section 
@@ -297,14 +361,26 @@ class AnandF6(DMModel):
         
 
 class AnandF7(DMModel):
-    def __init__(self, cp, cn):
+    def __init__(self, cp, cn,norm="p"):
         """
         Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
 
     def FF(self,Target,ER,vm):
         """
@@ -356,15 +432,27 @@ class AnandF7(DMModel):
         
 
 class AnandF8(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cp, cn, jx,norm="p"):
         """
         Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
     def FF(self,Target,ER,vm):
         """
@@ -420,15 +508,27 @@ class AnandF8(DMModel):
         
 
 class AnandF9(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cp, cn, jx,norm="p"):
         """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
+        Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
     def FF(self,Target,ER):
         """
@@ -475,14 +575,26 @@ class AnandF9(DMModel):
         
 
 class AnandF10(DMModel):
-    def __init__(self, cp, cn):
+    def __init__(self, cp, cn,norm="p"):
         """
         Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
 
     def FF(self,Target,ER):
         """
@@ -529,15 +641,27 @@ class AnandF10(DMModel):
         
 
 class AnandF11(DMModel):
-    def __init__(self, cp, cn,jx):
+    def __init__(self, cp, cn,jx,norm="p"):
         """
-        Initialise with a set of cp and cn values (coupling to n and p) and DM spin
+        Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
     def FF(self, Target, ER):
         """
@@ -582,15 +706,27 @@ class AnandF11(DMModel):
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 class AnandF12(DMModel):
-    def __init__(self, cp, cn, jx):
+    def __init__(self, cp, cn, jx,norm="p"):
         """
         Initialise with a set of cp and cn values
+        cp: coupling to proton
+        cn: coupling to neutron
+        norm: normalisation method used (default is to let cp==1). This will impact the physical meaning of your cross section.
+            (if you aren't sure what that means, just use "p", which is the default for usual direct detection sensitivity plots)
         """
-        self.cp = cp/np.sqrt(cp*cp+cn*cn)
-        self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="p":
+            print("Normalising wrt the proton coupling. Make sure to use proton cross section for EFT matching")
+            self.cp = cp/cp
+            self.cn = cn/cp
+        if norm=="n":
+            print("Normalising wrt the neutron coupling. Make sure to use neutron cross section for EFT matching")
+            self.cp = cp/cn
+            self.cn = cn/cn
+        if norm=="vec":
+            print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
+            self.cp = cp/np.sqrt(cp*cp+cn*cn)
+            self.cn = cn/np.sqrt(cp*cp+cn*cn)
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
     def FF(self,Target,ER,vm): 
         """
@@ -644,7 +780,7 @@ class AnandF12(DMModel):
             dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-###### Need to double check units and signs for these       
+###### Need to double check units, signs, and normalisation for these       
 class AnandF1F3(DMModel):
     def __init__(self, cp1, cn1, cp3, cn3):
         c0 = np.sqrt(cp1**2 + cn1**2 + cp3**2 + cn3**2)

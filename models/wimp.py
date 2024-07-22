@@ -21,11 +21,11 @@ class SIWIMP_Helm(DMModel):
         For this model, we take the Helm Form Factor rather than those defined from nrefts. Note that it should be ~ equal to the O1 SIWIMP
         [mX] = [eV] DM mass
         [ER] = [eV] DM recoil energy
-        [sig] = [cm]^2 cross section
+        [sig] = [cm]^2 nucleon cross section
 
         Output units: cpd/kg/keV
         """
-        FF = Target.Helm(ER)**2 ## form factor with couplings. Note that proton and neutron couplings are normalised to 1
+        FF = Target.Helm(ER)**2 ## helm form factor
         dsigdER = (1/kg_to_eV)*sig*FF*Target.A()*Target.A()/(2*Target.N_T()*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
         vm = self.vmin(Target,mX,ER)
         return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
