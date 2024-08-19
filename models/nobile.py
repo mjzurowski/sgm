@@ -57,7 +57,6 @@ class NobileF1(DMModel):
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
 
-
 class NobileF3(DMModel):
     def __init__(self, cp, cn):
         """
@@ -112,7 +111,6 @@ class NobileF3(DMModel):
             dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-
 class NobileF4(DMModel):
     def __init__(self, cq, jx):
         """
@@ -217,7 +215,6 @@ class NobileF5(DMModel):
             dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-
 class NobileF6(DMModel):
     def __init__(self, cq, jx):
         """
@@ -267,7 +264,6 @@ class NobileF6(DMModel):
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
-
 class NobileF7(DMModel):
     def __init__(self, cq):
         """
@@ -287,7 +283,7 @@ class NobileF7(DMModel):
         n_n = cn*cn*Target.FS1nn(ER)
 
         h = (p_p+p_n+n_p+n_n)/8
-        g = -vm*vm(p_p+p_n+n_p+n_n)/8
+        g = -vm*vm*(p_p+p_n+n_p+n_n)/8
 
         return [g,h]
 
@@ -318,7 +314,6 @@ class NobileF7(DMModel):
             dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-
 class NobileF8(DMModel):
     def __init__(self, cq, jx):
         """
@@ -377,7 +372,6 @@ class NobileF8(DMModel):
             dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-
 class NobileF9(DMModel):
     def __init__(self, cq, jx):
         """
@@ -428,7 +422,6 @@ class NobileF9(DMModel):
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
-
 class NobileF10(DMModel):
     def __init__(self, cq):
         """
@@ -479,7 +472,6 @@ class NobileF10(DMModel):
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
-
 class NobileF11(DMModel):
     def __init__(self, cq, jx):
         """
@@ -588,7 +580,6 @@ class NobileF12(DMModel):
             dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2 # units of [cm]^2/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
 
-
 class NobileF13(DMModel):
     def __init__(self, cp, cn, jx):
         """
@@ -610,7 +601,7 @@ class NobileF13(DMModel):
 
         g_p_p = self.cp*self.cp*(np.power(Target.Q(ER)/np.sqrt(mp),4.)*Target.FPhipp(ER)-np.power(vm*Target.Q(ER),2.)*self.FS2pp(ER))
         g_p_n = self.cp*self.cn*(np.power(Target.Q(ER)/np.sqrt(mp),4.)*Target.FPhipn(ER)-np.power(vm*Target.Q(ER),2.)*self.FS2pn(ER))
-        g_n_p = elf.cn*self.cp*(np.power(Target.Q(ER)/np.sqrt(mp),4.)*Target.FPhinp(ER)-np.power(vm*Target.Q(ER),2.)*self.FS2np(ER))
+        g_n_p = self.cn*self.cp*(np.power(Target.Q(ER)/np.sqrt(mp),4.)*Target.FPhinp(ER)-np.power(vm*Target.Q(ER),2.)*self.FS2np(ER))
         g_n_n = self.cn*self.cn*(np.power(Target.Q(ER)/np.sqrt(mp),4.)*Target.FPhinn(ER)-np.power(vm*Target.Q(ER),2.)*self.FS2nn(ER))
         g = Target.spin_dep(self.jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/16  #units = eV^2
 
@@ -692,7 +683,6 @@ class NobileF14(DMModel):
             dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
  
-
 class NobileF15(DMModel):
     def __init__(self, cp, cn):
         """
@@ -768,7 +758,7 @@ class NobileF1F3(DMModel):
         p_n = self.cp1*self.cn3*Target.FMPhi2pn(ER)
         n_p = self.cn1*self.cp3*Target.FMPhi2np(ER)
         n_n = self.cn1*self.cn3*Target.FMPhi2nn(ER)
-        return -Target.spin_dep(self.jx)*np.power(Target.Q(ER)/np.sqrt(mp),2.)*(p_p+p_n+n_p+n_n) # units = eV
+        return -0.5*np.power(Target.Q(ER)/np.sqrt(mp),2.)*(p_p+p_n+n_p+n_n) # units = eV
 
     def vmin(self,Target,mX,ER):
        """
@@ -989,7 +979,7 @@ class NobileF8F9(DMModel):
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
-class NobileF8F9(DMModel):
+class NobileF9F8(DMModel):
     def __init__(self, cp8, cn8, cp9, cn9, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
@@ -1152,7 +1142,7 @@ class NobileF11F15(DMModel):
         p_n = self.cp11*self.cn15*Target.FMPhi2pn(ER)
         n_p = self.cn11*self.cp15*Target.FMPhi2np(ER)
         n_n = self.cn11*self.cn15*Target.FMPhi2nn(ER)
-        return Target.spin_dep(self.jx)*np.power(Target.Q(ER)/(mp**(1/4)),2.)*(p_p+p_n+n_p+n_n)/8 # units = eV^3
+        return Target.spin_dep(self.jx)*np.power(Target.Q(ER)**2/(mp**(1/2)),2.)*(p_p+p_n+n_p+n_n)/8 # units = eV^3
 
     def vmin(self,Target,mX,ER):
        """

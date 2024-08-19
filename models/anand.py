@@ -72,7 +72,6 @@ class AnandF1(DMModel):
             dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
 
-
 class AnandF3(DMModel):
     def __init__(self, cp, cn,norm="p"):
         """
@@ -147,7 +146,6 @@ class AnandF3(DMModel):
             dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-
 class AnandF4(DMModel):
     def __init__(self, cp, cn,jx,norm="p"):
         """
@@ -290,7 +288,6 @@ class AnandF5(DMModel):
             dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-
 class AnandF6(DMModel):
     def __init__(self, cp, cn, jx,norm="p"):
         """
@@ -359,7 +356,6 @@ class AnandF6(DMModel):
             dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
-
 class AnandF7(DMModel):
     def __init__(self, cp, cn,norm="p"):
         """
@@ -397,7 +393,7 @@ class AnandF7(DMModel):
         n_n = self.cn*self.cn*Target.FS1nn(ER)
 
         h = (p_p+p_n+n_p+n_n)/8
-        g = -vm*vm(p_p+p_n+n_p+n_n)/8
+        g = -vm*vm*(p_p+p_n+n_p+n_n)/8
 
         return [g,h]
 
@@ -430,7 +426,6 @@ class AnandF7(DMModel):
             dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-
 class AnandF8(DMModel):
     def __init__(self, cp, cn, jx,norm="p"):
         """
@@ -506,7 +501,6 @@ class AnandF8(DMModel):
             dsigdER_h = cross_sec*FF[1]*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
         
-
 class AnandF9(DMModel):
     def __init__(self, cp, cn, jx,norm="p"):
         """
@@ -573,7 +567,6 @@ class AnandF9(DMModel):
             dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
-
 class AnandF10(DMModel):
     def __init__(self, cp, cn,norm="p"):
         """
@@ -639,7 +632,6 @@ class AnandF10(DMModel):
             dsigdER = cross_sec*FF*Target.mT()/(2*Target.mu_N(mX)*Target.mu_N(mX)) ## units of [cm^2]/[eV]
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
-
 class AnandF11(DMModel):
     def __init__(self, cp, cn,jx,norm="p"):
         """
@@ -801,7 +793,7 @@ class AnandF1F3(DMModel):
         p_n = self.cp1*self.cn3*Target.FMPhi2pn(ER)
         n_p = self.cn1*self.cp3*Target.FMPhi2np(ER)
         n_n = self.cn1*self.cn3*Target.FMPhi2nn(ER)
-        return np.power(Target.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)   
+        return 0.5*np.power(Target.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)   
 
     def vmin(self,Target,mX,ER):
        """
@@ -856,7 +848,7 @@ class AnandF4F5(DMModel):
         p_n = self.cp4*self.cn5*Target.FS1Dpn(ER)
         n_p = self.cn4*self.cp5*Target.FS1Dnp(ER)
         n_n = self.cn4*self.cn5*Target.FS1Dnn(ER)
-        return 0.25*Target.spin_dep(self.jx)*np.power(Target.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)
+        return 0.5*0.25*Target.spin_dep(self.jx)*np.power(Target.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)
 
     def vmin(self,Target,mX,ER):
        """
@@ -911,7 +903,7 @@ class AnandF4F6(DMModel):
         p_n = self.cp4*self.cn6*Target.FS2pn(ER)
         n_p = self.cn4*self.cp6*Target.FS2np(ER)
         n_n = self.cn4*self.cn6*Target.FS2nn(ER)
-        return Target.spin_dep(self.jx)*np.power(Target.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)/8
+        return 0.5*Target.spin_dep(self.jx)*np.power(Target.Q(ER)/mp,2.)*(p_p+p_n+n_p+n_n)/8
 
     def vmin(self,Target,mX,ER):
        """
