@@ -304,8 +304,8 @@ def sigma_from_EFT(cq,mX,Lambda):
     c_sq+= (c3[0]/pow(Lambda,3)-2*(mp/mX)*c10[0]/pow(Lambda,2))**2
     c_sq+= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))**2
     ## sum for c11_NR
-    c_sq+= (2*c10[0]/pow(Lambda,2)-2*(mp/mX)*c2[0]/pow(Lambda,3))**2
-    c_sq+= (2*c10[1]/pow(Lambda,2)-2*(mp/mX)*c2[1]/pow(Lambda,3))**2
+    c_sq+= (2*c10[0]/pow(Lambda,2)-(mp/mX)*c2[0]/pow(Lambda,3))**2
+    c_sq+= (2*c10[1]/pow(Lambda,2)-(mp/mX)*c2[1]/pow(Lambda,3))**2
     ## compute cross section based on this sum
     sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
     return sig
@@ -345,7 +345,7 @@ def sigma_p_from_EFT(cq,mX,Lambda):
     ## sum for c10_NR
     c_sq+= (c3[0]/pow(Lambda,3)-2*(mp/mX)*c10[0]/pow(Lambda,2))**2
     ## sum for c11_NR
-    c_sq+= (2*c10[0]/pow(Lambda,2)-2*(mp/mX)*c2[0]/pow(Lambda,3))**2
+    c_sq+= (2*c10[0]/pow(Lambda,2)-(mp/mX)*c2[0]/pow(Lambda,3))**2
     ## compute cross section based on this sum
     sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
     return sig
@@ -384,7 +384,7 @@ def sigma_n_from_EFT(cq,mX,Lambda):
     ## sum for c10_NR
     c_sq+= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))**2
     ## sum for c11_NR
-    c_sq+= (2*c10[1]/pow(Lambda,2)-2*(mp/mX)*c2[1]/pow(Lambda,3))**2
+    c_sq+= (2*c10[1]/pow(Lambda,2)-(mp/mX)*c2[1]/pow(Lambda,3))**2
     ## compute cross section based on this sum
     sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
     return sig
