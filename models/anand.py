@@ -29,6 +29,10 @@ class AnandF1(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
 
     def FF(self, Target, ER):
         """
@@ -93,6 +97,10 @@ class AnandF3(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
 
     def FF(self, Target, ER,vm):
         """
@@ -167,6 +175,10 @@ class AnandF4(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
         self.jx = jx
 
 
@@ -234,6 +246,10 @@ class AnandF5(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
         self.jx = jx
 
     def FF(self, Target, ER, vm):
@@ -309,9 +325,11 @@ class AnandF6(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
         self.jx = jx
-        ## ultimately could try and use this to help with the mapping from EFT to exp
-        ## eg, normalise them here to allow for a certain cross section 
 
     def FF(self, Target, ER):
         """
@@ -377,6 +395,10 @@ class AnandF7(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
 
     def FF(self,Target,ER,vm):
         """
@@ -447,6 +469,10 @@ class AnandF8(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
         self.jx = jx
 
     def FF(self,Target,ER,vm):
@@ -462,13 +488,13 @@ class AnandF8(DMModel):
         g_p_n = self.cp*self.cn*(pow(Target.Q(ER)/mp,2)*Target.FDpn(ER)-vm*vm*Target.FMpn(ER))
         g_n_p = self.cn*self.cp*(pow(Target.Q(ER)/mp,2)*Target.FDnp(ER)-vm*vm*Target.FMnp(ER))
         g_n_n = self.cn*self.cn*(pow(Target.Q(ER)/mp,2)*Target.FDnn(ER)-vm*vm*Target.FMnn(ER))
-        g = 0.25*Target.spin_dep(self.jx)*(g_p_p+g_p_n+g_n_p+g_n_n)
+        g = Target.spin_dep(self.jx)*(g_p_p+g_p_n+g_n_p+g_n_n)/4
         
         h_p_p = self.cp*self.cp*Target.FMpp(ER)
         h_p_n = self.cp*self.cn*Target.FMpn(ER)
         h_n_p = self.cn*self.cp*Target.FMnp(ER)
         h_n_n = self.cn*self.cn*Target.FMnn(ER)
-        h = 0.25*Target.spin_dep(self.jx)*(h_p_p+h_p_n+h_n_p+h_n_n)
+        h = Target.spin_dep(self.jx)*(h_p_p+h_p_n+h_n_p+h_n_n)/4
 
         return [g,h]
     
@@ -522,6 +548,10 @@ class AnandF9(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
         self.jx = jx
 
     def FF(self,Target,ER):
@@ -588,6 +618,10 @@ class AnandF10(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
 
     def FF(self,Target,ER):
         """
@@ -653,6 +687,10 @@ class AnandF11(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
         self.jx = jx
 
     def FF(self, Target, ER):
@@ -718,6 +756,10 @@ class AnandF12(DMModel):
             print("Normalising wrt the nucleon 'vector'. Make sure to use nucleon vector cross section for EFT matching")
             self.cp = cp/np.sqrt(cp*cp+cn*cn)
             self.cn = cn/np.sqrt(cp*cp+cn*cn)
+        if norm=="none":
+            print("No normalisation will be applied to the couplings. I hope you've carefully normalised them yourself...")
+            self.cp = cp
+            self.cn = cn
         self.jx = jx
 
     def FF(self,Target,ER,vm): 

@@ -263,7 +263,198 @@ def c10_N(cq):
 ######################################################################################################
 ## Map the relativistic couplings to a cross section (to give approx measure of interaction strength)
 ######################################################################################################
-def sigma_from_EFT(cq,mX,Lambda):
+
+def c_norm(cq,mX,Lambda,norm="p"):
+    """
+    Term that can be used to calculate the normalisation based on a set of form factors turned on by a relativistic set of couplings
+    Note that if this ends up changing with Lambda (i.e., there are quark couplings that do not have the same scaling turned on) mapping between Lambda and sigma is non-trivial
+    """
+    c1 = c1_N(cq)
+    c2 = c2_N(cq)
+    c3 = c3_N(cq)
+    c4 = c4_N(cq)
+    c5 = c5_N(cq)
+    c6 = c6_N(cq)
+    c7 = c7_N(cq)
+    c8 = c8_N(cq)
+    c9 = c9_N(cq)
+    c10 = c10_N(cq)
+    c_sq = 0 # sum of c^2 values. Will have units of [eV]^-4
+    if norm=="p":
+        ## sum for c1_NR
+        c_sq+= (c1[0]/pow(Lambda,3)+c5[0]/pow(Lambda,2))**2
+        ## sum for c4_NR
+        c_sq+= ((8*c9[0]-4*c8[0])/pow(Lambda,2))**2
+        ## sum for c6_NR
+        c_sq+= ((mp/mX)*c4[0]/pow(Lambda,3))**2
+        ## sum for c7_NR
+        c_sq+= (2*c7[0]/pow(Lambda,2))**2
+        ## sum for c8_NR
+        c_sq+= (2*c6[0]/pow(Lambda,2))**2
+        ## sum for c9_NR
+        c_sq+= (2*c6[0]/pow(Lambda,2)+2*(mp/mX)*c7[0]/pow(Lambda,2))**2
+        ## sum for c10_NR
+        c_sq+= (c3[0]/pow(Lambda,3)-2*(mp/mX)*c10[0]/pow(Lambda,2))**2
+        ## sum for c11_NR
+        c_sq+= (2*c10[0]/pow(Lambda,2)-(mp/mX)*c2[0]/pow(Lambda,3))**2
+    if norm=="n":
+        ## sum for c1_NR
+        c_sq+=(c1[1]/pow(Lambda,3)+c5[1]/pow(Lambda,2))**2
+        ## sum for c4_NR
+        c_sq+=((8*c9[1]-4*c8[1])/pow(Lambda,2))**2
+        ## sum for c6_NR
+        c_sq+=((mp/mX)*c4[1]/pow(Lambda,3))**2
+        ## sum for c7_NR
+        c_sq+=(2*c7[1]/pow(Lambda,2))**2
+        ## sum for c8_NR
+        c_sq+=(2*c6[1]/pow(Lambda,2))**2
+        ## sum for c9_NR
+        c_sq+= (2*c6[1]/pow(Lambda,2)+2*(mp/mX)*c7[1]/pow(Lambda,2))**2
+        ## sum for c10_NR
+        c_sq+= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))**2
+        ## sum for c11_NR
+        c_sq+= (2*c10[1]/pow(Lambda,2)-(mp/mX)*c2[1]/pow(Lambda,3))**2
+    if norm=="vec":
+        ## sum for c1_NR
+        c_sq+=(c1[0]/pow(Lambda,3)+c5[0]/pow(Lambda,2))**2
+        c_sq+=(c1[1]/pow(Lambda,3)+c5[1]/pow(Lambda,2))**2
+        ## sum for c4_NR
+        c_sq+=((8*c9[0]-4*c8[0])/pow(Lambda,2))**2
+        c_sq+=((8*c9[1]-4*c8[1])/pow(Lambda,2))**2
+        ## sum for c6_NR
+        c_sq+=((mp/mX)*c4[0]/pow(Lambda,3))**2
+        c_sq+=((mp/mX)*c4[1]/pow(Lambda,3))**2
+        ## sum for c7_NR
+        c_sq+=(2*c7[0]/pow(Lambda,2))**2
+        c_sq+=(2*c7[1]/pow(Lambda,2))**2
+        ## sum for c8_NR
+        c_sq+=(2*c6[0]/pow(Lambda,2))**2
+        c_sq+=(2*c6[1]/pow(Lambda,2))**2
+        ## sum for c9_NR
+        c_sq+= (2*c6[0]/pow(Lambda,2)+2*(mp/mX)*c7[0]/pow(Lambda,2))**2
+        c_sq+= (2*c6[1]/pow(Lambda,2)+2*(mp/mX)*c7[1]/pow(Lambda,2))**2
+        ## sum for c10_NR
+        c_sq+= (c3[0]/pow(Lambda,3)-2*(mp/mX)*c10[0]/pow(Lambda,2))**2
+        c_sq+= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))**2
+        ## sum for c11_NR
+        c_sq+= (2*c10[0]/pow(Lambda,2)-(mp/mX)*c2[0]/pow(Lambda,3))**2
+        c_sq+= (2*c10[1]/pow(Lambda,2)-(mp/mX)*c2[1]/pow(Lambda,3))**2
+    return np.sqrt(c_sq) ## Normalisation
+
+###################################################################################
+### Normalised nonrelativistic couplings derived from a specific high energy model
+###################################################################################
+
+def c1_NR(cq, mX, Lambda,norm="p"):
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c1"]==cq["c5"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c1 = c1_N(cq)
+        c5 = c5_N(cq)
+        cnorm = c_norm(cq,mX,Lambda,norm)
+        cp=(c1[0]/pow(Lambda,3)+c5[0]/pow(Lambda,2))/cnorm
+        cn=(c1[1]/pow(Lambda,3)+c5[1]/pow(Lambda,2))/cnorm
+        return [cp,cn]
+        
+def c4_NR(cq, mX, Lambda, norm="p"):
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c9"]==cq["c8"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c8 = c8_N(cq)
+        c9 = c9_N(cq)
+        cnorm = c_norm(cq,mX,Lambda,norm)
+        cp=((8*c9[0]-4*c8[0])/pow(Lambda,2))/cnorm
+        cn=((8*c9[1]-4*c8[1])/pow(Lambda,2))/cnorm
+        return [cp,cn]
+
+def c6_NR(cq, mX, Lambda, norm="p"):
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c4"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c4 = c4_N(cq)
+        cnorm = c_norm(cq,mX,Lambda,norm)
+        cp=((mp/mX)*c4[0]/pow(Lambda,3))/cnorm
+        cn=((mp/mX)*c4[1]/pow(Lambda,3))/cnorm
+        return [cp,cn]
+
+def c7_NR(cq, mX, Lambda, norm="p"):
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c7"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c7 = c7_N(cq)
+        cnorm = c_norm(cq,mX,Lambda)
+        cp=(2*c7[0]/pow(Lambda,2))/cnorm
+        cn=(2*c7[1]/pow(Lambda,2))/cnorm
+        return [cp,cn]
+
+def c8_NR(cq, mX, Lambda, norm="p"):
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c6"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c6 = c6_N(cq)
+        cnorm = c_norm(cq,mX,Lambda,norm)
+        cp=(2*c6[0]/pow(Lambda,2))/cnorm
+        cn=(2*c6[1]/pow(Lambda,2))/cnorm
+        return [cp,cn]
+
+def c9_NR(cq, mX, Lambda, norm="p"):
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c6"]==cq["c7"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c6 = c6_N(cq)
+        c7 = c7_N(cq)
+        cnorm = c_norm(cq,mX,Lambda,norm)
+        cp= (2*c6[0]/pow(Lambda,2)+2*(mp/mX)*c7[0]/pow(Lambda,2))/cnorm
+        cn= (2*c6[1]/pow(Lambda,2)+2*(mp/mX)*c7[1]/pow(Lambda,2))/cnorm
+        return [cp,cn]
+
+def c10_NR(cq, mX, Lambda, norm="p"):
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c3"]==cq["c10"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c3 = c3_N(cq)
+        c10 = c10_N(cq)
+        cnorm = c_norm(cq,mX,Lambda,norm)
+        cp= (c3[0]/pow(Lambda,3)-2*(mp/mX)*c10[0]/pow(Lambda,2))/cnorm
+        cn= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))/cnorm
+        return [cp,cn]
+
+def c11_NR(cq, mX, Lambda,norm="p"):
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c2"]==cq["c10"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c2 = c2_N(cq)
+        c10 = c10_N(cq)
+        cnorm = c_norm(cq,mX,Lambda,norm)
+        cp= (2*c10[0]/pow(Lambda,2)-(mp/mX)*c2[0]/pow(Lambda,3))/cnorm
+        cn= (2*c10[1]/pow(Lambda,2)-(mp/mX)*c2[1]/pow(Lambda,3))/cnorm
+        return [cp,cn]
+
+def sigma_from_EFT(cq,mX,Lambda,norm="p"):
     """
     [cq] = unitless set of active relativistic operators
     [mX] = [eV] DM mass
@@ -271,120 +462,7 @@ def sigma_from_EFT(cq,mX,Lambda):
 
     Output units: [cm]^2 cross section of the nucleon 'vector'
     """
-    c1 = c1_N(cq)
-    c2 = c2_N(cq)
-    c3 = c3_N(cq)
-    c4 = c4_N(cq)
-    c5 = c5_N(cq)
-    c6 = c6_N(cq)
-    c7 = c7_N(cq)
-    c8 = c8_N(cq)
-    c9 = c9_N(cq)
-    c10 = c10_N(cq)
-    c_sq = 0 # sum of c^2 values. Will have units of [eV]^-4
-    ## sum for c1_NR
-    c_sq+=(c1[0]/pow(Lambda,3)+c5[0]/pow(Lambda,2))**2
-    c_sq+=(c1[1]/pow(Lambda,3)+c5[1]/pow(Lambda,2))**2
-    ## sum for c4_NR
-    c_sq+=((8*c9[0]-4*c8[0])/pow(Lambda,2))**2
-    c_sq+=((8*c9[1]-4*c8[1])/pow(Lambda,2))**2
-    ## sum for c6_NR
-    c_sq+=((mp/mX)*c4[0]/pow(Lambda,3))**2
-    c_sq+=((mp/mX)*c4[1]/pow(Lambda,3))**2
-    ## sum for c7_NR
-    c_sq+=(2*c7[0]/pow(Lambda,2))**2
-    c_sq+=(2*c7[1]/pow(Lambda,2))**2
-    ## sum for c8_NR
-    c_sq+=(2*c6[0]/pow(Lambda,2))**2
-    c_sq+=(2*c6[1]/pow(Lambda,2))**2
-    ## sum for c9_NR
-    c_sq+= (2*c6[0]/pow(Lambda,2)+2*(mp/mX)*c7[0]/pow(Lambda,2))**2
-    c_sq+= (2*c6[1]/pow(Lambda,2)+2*(mp/mX)*c7[1]/pow(Lambda,2))**2
-    ## sum for c10_NR
-    c_sq+= (c3[0]/pow(Lambda,3)-2*(mp/mX)*c10[0]/pow(Lambda,2))**2
-    c_sq+= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))**2
-    ## sum for c11_NR
-    c_sq+= (2*c10[0]/pow(Lambda,2)-(mp/mX)*c2[0]/pow(Lambda,3))**2
-    c_sq+= (2*c10[1]/pow(Lambda,2)-(mp/mX)*c2[1]/pow(Lambda,3))**2
-    ## compute cross section based on this sum
+    c_sq = c_norm(cq,mX,Lambda,norm)**2 # sum of c^2 values. Will have units of [eV]^-4
     sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
     return sig
 
-
-def sigma_p_from_EFT(cq,mX,Lambda):
-    """
-    [cq] = unitless set of active relativistic operators
-    [mX] = [eV] DM mass
-    [Lambda] = [eV] new physics scale
-
-    Output units: [cm]^2 proton-DM cross section 
-    """
-    c1 = c1_N(cq)
-    c2 = c2_N(cq)
-    c3 = c3_N(cq)
-    c4 = c4_N(cq)
-    c5 = c5_N(cq)
-    c6 = c6_N(cq)
-    c7 = c7_N(cq)
-    c8 = c8_N(cq)
-    c9 = c9_N(cq)
-    c10 = c10_N(cq)
-    c_sq = 0 # sum of c^2 values. Will have units of [eV]^-4
-    ## sum for c1_NR
-    c_sq+=(c1[0]/pow(Lambda,3)+c5[0]/pow(Lambda,2))**2
-    ## sum for c4_NR
-    c_sq+=((8*c9[0]-4*c8[0])/pow(Lambda,2))**2
-    ## sum for c6_NR
-    c_sq+=((mp/mX)*c4[0]/pow(Lambda,3))**2
-    ## sum for c7_NR
-    c_sq+=(2*c7[0]/pow(Lambda,2))**2
-    ## sum for c8_NR
-    c_sq+=(2*c6[0]/pow(Lambda,2))**2
-    ## sum for c9_NR
-    c_sq+= (2*c6[0]/pow(Lambda,2)+2*(mp/mX)*c7[0]/pow(Lambda,2))**2
-    ## sum for c10_NR
-    c_sq+= (c3[0]/pow(Lambda,3)-2*(mp/mX)*c10[0]/pow(Lambda,2))**2
-    ## sum for c11_NR
-    c_sq+= (2*c10[0]/pow(Lambda,2)-(mp/mX)*c2[0]/pow(Lambda,3))**2
-    ## compute cross section based on this sum
-    sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
-    return sig
-
-def sigma_n_from_EFT(cq,mX,Lambda):
-    """
-    [cq] = unitless set of active relativistic operators
-    [mX] = [eV] DM mass
-    [Lambda] = [eV] new physics scale
-
-    Output units: [cm]^2 neutron-DM cross section 
-    """
-    c1 = c1_N(cq)
-    c2 = c2_N(cq)
-    c3 = c3_N(cq)
-    c4 = c4_N(cq)
-    c5 = c5_N(cq)
-    c6 = c6_N(cq)
-    c7 = c7_N(cq)
-    c8 = c8_N(cq)
-    c9 = c9_N(cq)
-    c10 = c10_N(cq)
-    c_sq = 0 # sum of c^2 values. Will have units of [eV]^-4
-    ## sum for c1_NR
-    c_sq+=(c1[1]/pow(Lambda,3)+c5[1]/pow(Lambda,2))**2
-    ## sum for c4_NR
-    c_sq+=((8*c9[1]-4*c8[1])/pow(Lambda,2))**2
-    ## sum for c6_NR
-    c_sq+=((mp/mX)*c4[1]/pow(Lambda,3))**2
-    ## sum for c7_NR
-    c_sq+=(2*c7[1]/pow(Lambda,2))**2
-    ## sum for c8_NR
-    c_sq+=(2*c6[1]/pow(Lambda,2))**2
-    ## sum for c9_NR
-    c_sq+= (2*c6[1]/pow(Lambda,2)+2*(mp/mX)*c7[1]/pow(Lambda,2))**2
-    ## sum for c10_NR
-    c_sq+= (c3[1]/pow(Lambda,3)-2*(mp/mX)*c10[1]/pow(Lambda,2))**2
-    ## sum for c11_NR
-    c_sq+= (2*c10[1]/pow(Lambda,2)-(mp/mX)*c2[1]/pow(Lambda,3))**2
-    ## compute cross section based on this sum
-    sig = eV2_to_cm2*pow(mp*mX/(mp+mX),2)*c_sq/np.pi
-    return sig
