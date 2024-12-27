@@ -454,6 +454,21 @@ def c11_NR(cq, mX, Lambda,norm="p"):
         cn= (2*c10[1]/pow(Lambda,2)-(mp/mX)*c2[1]/pow(Lambda,3))/cnorm
         return [cp,cn]
 
+def c12_NR(cq, mX, Lambda,norm="p"):
+### THIS ONE IS MADE UP NEED TO FIX
+    ## Input: dictionary of couplings
+    ## Output units: [eV]
+    if cq["c10"]==0:
+        return [0,0]
+    else:
+        ## sum for c1_NR
+        c2 = c2_N(cq)
+        c10 = c10_N(cq)
+        cnorm = c_norm(cq,mX,Lambda,norm)
+        cp= (8*c10[0]/pow(Lambda,2))/cnorm
+        cn= (8*c10[1]/pow(Lambda,2))/cnorm
+        return [cp,cn]
+
 def sigma_from_EFT(cq,mX,Lambda,norm="p"):
     """
     [cq] = unitless set of active relativistic operators

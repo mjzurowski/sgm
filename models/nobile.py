@@ -836,24 +836,27 @@ class NobileF4F5(DMModel):
         
 
 class NobileF4F6(DMModel):
-    def __init__(self, cp4, cn4, cp6, cn6, jx):
+    def __init__(self, cq, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
         """
-        self.cp4 = cp4
-        self.cn4 = cn4
-        self.cp6 = cp6
-        self.cn6 = cn6
+        self.c8 = c8_N(cq)
+        self.c9 = c9_N(cq)
+        self.c4 = c4_N(cq)
         self.jx = jx
 
-    def FF(self, Target, ER):
+    def FF(self, Target, ER, mX, Lambda):
         """
         Form factor expression for interference of O4 and O5
         """
-        p_p = self.cp4*self.cp6*Target.FS2pp(ER)
-        p_n = self.cp4*self.cn6*Target.FS2pn(ER)
-        n_p = self.cn4*self.cp6*Target.FS2np(ER)
-        n_n = self.cn4*self.cn6*Target.FS2nn(ER)
+        cp4 = 16*mp*mX*(2*self.c9[0]-self.c8[0])/pow(Lambda,2)
+        cn4 = 16*mp*mX*(2*self.c9[1]-self.c8[1])/pow(Lambda,2)
+        cp6 = 4*self.c4[0]/pow(Lambda,3)
+        cn6 = 4*self.c4[1]/pow(Lambda,3)
+        p_p = cp4*cp6*Target.FS2pp(ER)
+        p_n = cp4*cn6*Target.FS2pn(ER)
+        n_p = cn4*cp6*Target.FS2np(ER)
+        n_n = cn4*cn6*Target.FS2nn(ER)
         return Target.spin_dep(self.jx)*np.power(Target.Q(ER),2.)*(p_p+p_n+n_p+n_n)/16 # units = eV^2
 
     def vmin(self,Target,mX,ER):
@@ -865,7 +868,7 @@ class NobileF4F6(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -873,35 +876,38 @@ class NobileF4F6(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c8==self.c9==self.c4==0):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
+            FF = self.FF(Target,ER,mX,Lambda)
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
 class NobileF6F4(DMModel):
-    def __init__(self, cp4, cn4, cp6, cn6, jx):
+    def __init__(self, cq, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
         """
-        self.cp4 = cp4
-        self.cn4 = cn4
-        self.cp6 = cp6
-        self.cn6 = cn6
+        self.c8 = c8_N(cq)
+        self.c9 = c9_N(cq)
+        self.c4 = c4_N(cq)
         self.jx = jx
 
-    def FF(self, Target, ER):
+    def FF(self, Target, ER, mX, Lambda):
         """
-        Form factor expression for interference of O4 and O6
+        Form factor expression for interference of O4 and O5
         """
-        p_p = self.cp6*self.cp4*Target.FS2pp(ER)
-        p_n = self.cp6*self.cn4*Target.FS2pn(ER)
-        n_p = self.cn6*self.cp4*Target.FS2np(ER)
-        n_n = self.cn6*self.cn4*Target.FS2nn(ER)
+        cp4 = 16*mp*mX*(2*self.c9[0]-self.c8[0])/pow(Lambda,2)
+        cn4 = 16*mp*mX*(2*self.c9[1]-self.c8[1])/pow(Lambda,2)
+        cp6 = 4*self.c4[0]/pow(Lambda,3)
+        cn6 = 4*self.c4[1]/pow(Lambda,3)
+        p_p = cp6*cp4*Target.FS2pp(ER)
+        p_n = cp6*cn4*Target.FS2pn(ER)
+        n_p = cn6*cp4*Target.FS2np(ER)
+        n_n = cn6*cn4*Target.FS2nn(ER)
         return Target.spin_dep(self.jx)*np.power(Target.Q(ER),2.)*(p_p+p_n+n_p+n_n)/16 # units = eV^2
 
     def vmin(self,Target,mX,ER):
@@ -913,7 +919,7 @@ class NobileF6F4(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -921,35 +927,44 @@ class NobileF6F4(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c8==self.c9==self.c4==0):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
+            FF = self.FF(Target,ER,mX,Lambda)
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
 class NobileF8F9(DMModel):
-    def __init__(self, cp8, cn8, cp9, cn9, jx):
+    def __init__(self,cq, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
         """
-        self.cp8 = cp8
-        self.cn8 = cn8
-        self.cp9 = cp9
-        self.cn9 = cn9
+        #self.cp8 = cp8
+        #self.cn8 = cn8
+        #self.cp9 = cp9
+        #self.cn9 = cn9
+        
         self.jx = jx
+        self.c6 = c6_N(cq)
+        self.c7 = c7_N(cq)
 
-    def FF(self, Target, ER):
+    
+    def FF(self, Target, ER, mX, Lambda):
         """
         Form factor expression for interference of O8 and O9
         """
-        p_p = self.cp8*self.cp9*Target.FS1Dpp(ER)
-        p_n = self.cp8*self.cn9*Target.FS1Dpn(ER)
-        n_p = self.cn8*self.cp9*Target.FS1Dnp(ER)
-        n_n = self.cn8*self.cn9*Target.FS1Dnn(ER)
+        cp8 = 8*mp*mX*self.c6[0]/pow(Lambda,2)
+        cn8 = 8*mp*mX*self.c6[1]/pow(Lambda,2)
+        cp9 = 8*mX*self.c6[0]/pow(Lambda,2)+8*mp*self.c7[0]/pow(Lambda,2)
+        cn9 = 8*mX*self.c6[1]/pow(Lambda,2)+8*mp*self.c7[1]/pow(Lambda,2)
+        
+        p_p = cp8*cp9*Target.FS1Dpp(ER)
+        p_n = cp8*cn9*Target.FS1Dnp(ER)
+        n_p = cn8*cp9*Target.FS1Dpn(ER)
+        n_n = cn8*cn9*Target.FS1Dnn(ER)
         return Target.spin_dep(self.jx)*np.power(Target.Q(ER)/np.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8 # units = eV
 
     def vmin(self,Target,mX,ER):
@@ -961,7 +976,7 @@ class NobileF8F9(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -969,35 +984,46 @@ class NobileF8F9(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c6==self.c7==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
+            FF = self.FF(Target,ER,mX,Lambda)
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
 class NobileF9F8(DMModel):
-    def __init__(self, cp8, cn8, cp9, cn9, jx):
+    def __init__(self, cq, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
         """
-        self.cp8 = cp8
-        self.cn8 = cn8
-        self.cp9 = cp9
-        self.cn9 = cn9
-        self.jx = jx
+        #self.cp8 = cp8
+        #self.cn8 = cn8
+        #self.cp9 = cp9
+        #self.cn9 = cn9
+        
 
-    def FF(self, Target, ER):
+        self.jx = jx
+        self.c6 = c6_N(cq)
+        self.c7 = c7_N(cq)
+
+    def FF(self, Target, ER, mX, Lambda):
         """
         Form factor expression for interference of O8 and O9
         """
-        p_p = self.cp9*self.cp8*Target.FS1Dpp(ER)
-        p_n = self.cp9*self.cn8*Target.FS1Dpn(ER)
-        n_p = self.cn9*self.cp8*Target.FS1Dnp(ER)
-        n_n = self.cn9*self.cn8*Target.FS1Dnn(ER)
+
+        cp8 = 8*mp*mX*self.c6[0]/pow(Lambda,2)
+        cn8 = 8*mp*mX*self.c6[1]/pow(Lambda,2)
+        cp9 = 8*mX*self.c6[0]/pow(Lambda,2)+8*mp*self.c7[0]/pow(Lambda,2)
+        cn9 = 8*mX*self.c6[1]/pow(Lambda,2)+8*mp*self.c7[1]/pow(Lambda,2)
+
+        
+        p_p = cp9*cp8*Target.FS1Dpp(ER)
+        p_n = cp9*cn8*Target.FS1Dpn(ER)
+        n_p = cn9*cp8*Target.FS1Dnp(ER)
+        n_n = cn9*cn8*Target.FS1Dnn(ER)
         return Target.spin_dep(self.jx)*np.power(Target.Q(ER)/np.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8 # units = eV
 
     def vmin(self,Target,mX,ER):
@@ -1009,7 +1035,7 @@ class NobileF9F8(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -1017,35 +1043,45 @@ class NobileF9F8(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c6==self.c7==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
+            FF = self.FF(Target,ER,mX,Lambda)
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
 class NobileF11F12(DMModel):
-    def __init__(self, cp11, cn11, cp12, cn12, jx):
+    def __init__(self, cq, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
         """
-        self.cp11 = cp11
-        self.cn11 = cn11
-        self.cp12 = cp12
-        self.cn12 = cn12
+        #self.cp11 = cp11
+        #self.cn11 = cn11
+        #self.cp12 = cp12
+        #self.cn12 = cn12
         self.jx = jx
 
-    def FF(self, Target, ER):
+        self.c2 = c2_N(cq)
+        self.c10 = c10_N(cq)
+
+    
+    def FF(self, Target, ER, mX, Lambda):
         """
         Form factor expression for interference of O11 and O12
         """
-        p_p = self.cp11*self.cp12*Target.FMPhi2pp(ER)
-        p_n = self.cp11*self.cn12*Target.FMPhi2pn(ER)
-        n_p = self.cn11*self.cp12*Target.FMPhi2np(ER)
-        n_n = self.cn11*self.cn12*Target.FMPhi2nn(ER)
+        cp11 = -4*mp*self.c2[0]/pow(Lambda,3)+8*mX*self.c10[0]/pow(Lambda,2)
+        cn11 = -4*mp*self.c2[1]/pow(Lambda,3)+8*mX*self.c10[1]/pow(Lambda,2)
+        cp12 = -32*mp*mX*self.c10[0]/pow(Lambda,2)
+        cn12 = -32*mp*mX*self.c10[1]/pow(Lambda,2)
+
+        
+        p_p = cp11*cp12*Target.FMPhi2pp(ER)
+        p_n = cp11*cn12*Target.FMPhi2pn(ER)
+        n_p = cn11*cp12*Target.FMPhi2np(ER)
+        n_n = cn11*cn12*Target.FMPhi2nn(ER)
         return -Target.spin_dep(self.jx)*np.power(Target.Q(ER)/np.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8 # units = eV
 
     def vmin(self,Target,mX,ER):
@@ -1057,7 +1093,7 @@ class NobileF11F12(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -1065,35 +1101,43 @@ class NobileF11F12(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c2==self.c10==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
+            FF = self.FF(Target,ER, mX, Lambda)
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
 
 class NobileF12F11(DMModel):
-    def __init__(self, cp11, cn11, cp12, cn12, jx):
+    def __init__(self, cq, jx):
         """
         Initialise with a set of cp and cn values (coupling to n and p) and DM spin
         """
-        self.cp11 = cp11
-        self.cn11 = cn11
-        self.cp12 = cp12
-        self.cn12 = cn12
+        #self.cp11 = cp11
+        #self.cn11 = cn11
+        #self.cp12 = cp12
+        #self.cn12 = cn12
         self.jx = jx
+        
+        self.c2 = c2_N(cq)
+        self.c10 = c10_N(cq)
 
-    def FF(self, Target, ER):
+    def FF(self, Target, ER, mX, Lambda):
         """
         Form factor expression for interference of O12 and O11
         """
-        p_p = self.cp12*self.cp11*Target.FMPhi2pp(ER)
-        p_n = self.cp12*self.cn11*Target.FMPhi2pn(ER)
-        n_p = self.cn12*self.cp11*Target.FMPhi2np(ER)
-        n_n = self.cn12*self.cn11*Target.FMPhi2nn(ER)
+        cp11 = -4*mp*self.c2[0]/pow(Lambda,3)+8*mX*self.c10[0]/pow(Lambda,2)
+        cn11 = -4*mp*self.c2[1]/pow(Lambda,3)+8*mX*self.c10[1]/pow(Lambda,2)
+        cp12 = -32*mp*mX*self.c10[0]/pow(Lambda,2)
+        cn12 = -32*mp*mX*self.c10[1]/pow(Lambda,2)
+        
+        p_p = cp12*cp11*Target.FMPhi2pp(ER)
+        p_n = cp12*cn11*Target.FMPhi2np(ER)
+        n_p = cn12*cp11*Target.FMPhi2pn(ER)
+        n_n = cn12*cn11*Target.FMPhi2nn(ER)
         return -Target.spin_dep(self.jx)*np.power(Target.Q(ER)/np.sqrt(mp),2.)*(p_p+p_n+n_p+n_n)/8 # units = eV
 
     def vmin(self,Target,mX,ER):
@@ -1105,7 +1149,7 @@ class NobileF12F11(DMModel):
        """
        return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
     
-    def dRdER(self,Target,ER,mX,VelDist):
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
         """
         For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
         [mX] = [eV] DM mass
@@ -1113,12 +1157,12 @@ class NobileF12F11(DMModel):
 
         Output units: cpd/kg/keV
         """
-        if(self.cn==self.cp==0):
+        if(self.c2==self.c10==[0,0]):
             # both coupling constants are zero, so the rate will be too
             return 0
         else:
             vm = self.vmin(Target,mX,ER)
-            FF = self.FF(Target,ER)
+            FF = self.FF(Target,ER,mX,Lambda)
             dsigdER = FF*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*dsigdER*VelDist.gdist(vm)
         
@@ -1227,3 +1271,46 @@ class NobileF12F15(DMModel):
             dsigdER_g = FF[0]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             dsigdER_h = FF[1]*Target.mT()/(32*np.pi*mX*mX*mp*mp)*eV2_to_cm2
             return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsigdER_g*VelDist.gdist(vm) + dsigdER_h*VelDist.hdist(vm))
+
+
+class NobileFull(DMModel):
+    def __init__(self, cq, jx):
+        self.F1 = NobileF1(cq)
+        self.F4 = NobileF4(cq,jx)
+        self.F6 = NobileF6(cq,jx)
+        self.F7 = NobileF7(cq)
+        self.F8 = NobileF8(cq,jx)
+        self.F9 = NobileF9(cq,jx)
+        self.F10 = NobileF10(cq)
+        self.F11 = NobileF11(cq,jx)
+        self.F12 = NobileF12(cq,jx)
+        self.F4F6 = NobileF4F6(cq,jx)
+        self.F6F4 = NobileF6F4(cq,jx)
+        self.F8F9 = NobileF8F9(cq,jx)
+        self.F9F8 = NobileF9F8(cq,jx)
+        self.F11F12 = NobileF11F12(cq,jx)
+        self.F12F11 = NobileF12F11(cq,jx)
+        
+        self.FF = [self.F1,self.F4,self.F6,self.F7,self.F8,self.F9,self.F10,self.F11,self.F12,self.F4F6,self.F6F4,self.F8F9,self.F9F8,self.F11F12,self.F12F11]
+
+    def vmin(self,Target,mX,ER):
+       """
+       [mX] = [eV] DM mass
+       [ER] = [eV] DM recoil energy
+
+       Output units: [km/s]
+       """
+       return kms*np.abs((Target.mT()*ER/Target.mu_T(mX)))/np.power(2.*Target.mT()*ER,0.5)
+    
+    def dRdER(self,Target,ER,mX,Lambda,VelDist):
+        """
+        For this model, we just take coupling of n and p to be equal, and the only operator we care about is O1
+        [mX] = [eV] DM mass
+        [ER] = [eV] DM recoil energy
+
+        Output units: cpd/kg/keV
+        """
+        rate = 0
+        for F in self.FF:
+            rate+=F.dRdER(Target,ER,mX,Lambda,VelDist) # Sum the rate for each form factor
+        return rate
