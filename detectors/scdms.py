@@ -21,19 +21,69 @@ def Y_Ge_Lindhard(ER):
     Z = 32
     A = 72.64
     k = 0.133*pow(Z,2/3)*pow(A,-0.5)
-    ep = 11.5*ER*pow(Z,-7/3)
+    ep = 11.5*ER*pow(Z,-7/3)/keV ## for this we need ER in keV... I think...
     g = 3*pow(ep,0.15)+0.7*pow(ep,0.6)+ep
     return k*g/(1+k*g)
 
-def Y_Ge_Sarkis(ER):
+def Y_Ge_Sarkis_mean(ER):
     """
-    Ionisation yield for Ge. Taken from Fig. 6 of PhysRevD.101.102001
+    Ionisation yield for Ge using the fit parameters and the corrected Lindhard model
     [ER] = [eV] recoil energy
     """
-    ER_samp = [0.04, 0.041, 0.043, 0.045, 0.049, 0.05, 0.053, 0.055, 0.059, 0.062, 0.066, 0.074, 0.085, 0.093, 0.105, 0.117, 0.143, 0.177, 0.22, 0.274, 0.38, 0.528, 0.827, 1.154, 1.816, 2.515, 3.902, 5.443, 6.732, 7.647, 10.152, 12.915, 16.086, 20.612, 24.604, 30.862, 37.899, 42.748, 54.002, 68.705, 79.159, 96.521] # keV
-    y_samp = [0, 0.019, 0.033, 0.049, 0.07, 0.075, 0.079, 0.082, 0.084, 0.085, 0.087, 0.092, 0.099, 0.103, 0.109, 0.113, 0.121, 0.128, 0.135, 0.143, 0.152, 0.161, 0.174, 0.183, 0.194, 0.203, 0.215, 0.225, 0.232, 0.235, 0.245, 0.253, 0.262, 0.272, 0.28, 0.29, 0.3, 0.307, 0.321, 0.333, 0.343, 0.357] # unitless
-    y = np.interp(ER/keV,ER_samp,y_samp) # turn input into keV for interpolation
-    return np.where(ER>0.04*keV,y,0)
+    Z = 32
+    A = 72.64
+    c0 = 3.0E-4
+    c1 = 0.62E-5
+    U = 0.02
+    k = 0.133*pow(Z,2./3.)*pow(A,-1./2.)
+    cz = 11.5*pow(Z,-7./3.)
+    epsR = cz*ER/keV ## for this we need ER in keV... I think...
+    u = cz*U
+    eps = epsR - u
+    g = 3*pow(eps,0.15) + 0.7*pow(eps,0.6) + eps
+    nuL = eps/(1+k*g)
+    nu = nuL + c0*pow(eps,0.5) + c1 + u
+    return 1-(nu)/(eps+u)
+
+def Y_Ge_Sarkis_min(ER):
+    """
+    Ionisation yield for Ge using the fit parameters and the corrected Lindhard model
+    [ER] = [eV] recoil energy
+    """
+    Z = 32
+    A = 72.64
+    c0 = (3.0-1.3)*1E-4
+    c1 = (0.62-0.12)*1E-5
+    U = 0.02-0.01
+    k = 0.133*pow(Z,2./3.)*pow(A,-1./2.)
+    cz = 11.5*pow(Z,-7./3.)
+    epsR = cz*ER/keV ## for this we need ER in keV... I think...
+    u = cz*U
+    eps = epsR - u
+    g = 3*pow(eps,0.15) + 0.7*pow(eps,0.6) + eps
+    nuL = eps/(1+k*g)
+    nu = nuL + c0*pow(eps,0.5) + c1 + u
+    return 1-(nu)/(eps+u)
+
+def Y_Ge_Sarkis_max(ER):
+    """
+    Ionisation yield for Ge using the fit parameters and the corrected Lindhard model
+    [ER] = [eV] recoil energy
+    """
+    Z = 32
+    A = 72.64
+    c0 = (3.0+1.3)*1E-4
+    c1 = (0.62+0.12)*1E-5
+    U = 0.02+0.01
+    k = 0.133*pow(Z,2./3.)*pow(A,-1./2.)
+    cz = 11.5*pow(Z,-7./3.)
+    epsR = cz*ER/keV ## for this we need ER in keV... I think...
+    u = cz*U
+    eps = epsR - u
+    g = 3*pow(eps,0.15) + 0.7*pow(eps,0.6) + eps
+    nuL = eps/(1+k*g)
+    nu = nuL + c0*pow(eps,0.5) + c1 + u
+    return 1-(nu)/(eps+u)
 
 def Y_Ge_LTP(ER):
     """
@@ -57,7 +107,7 @@ def Y_Si_LTP(ER):
 
 
 class GeHV(Detector):
-    def __init__(self, volt, shell_model="Fitz"):
+    def __init__(self, volt, shell_model="Fitz",y_model=Y_Ge_LTP):
         ## allow for initialisation with different shell models
         self.shell_model = shell_model
 
@@ -72,9 +122,9 @@ class GeHV(Detector):
 
         # construct arrays for E_obs --> ER interpolation
         eps = 3.0 #eV
-        self.ER_samp = np.arange(0,100*keV,100) # recoil energy in eV range up to 100 keV in steps of 100 eV
-        #self.E_samp = (Y_Ge_LTP(self.ER_samp)*volt+eps)*self.ER_samp/(eps+volt)# observed energy in eV
-        self.E_samp = (1+Y_Ge_LTP(self.ER_samp)*volt/eps)*self.ER_samp# observed energy in eV
+        self.ER_samp = np.arange(0,50*keV,0.1) # recoil energy in eV range up to 100 keV in steps of 100 eV
+        self.E_samp = (y_model(self.ER_samp)*volt+eps)*self.ER_samp/(eps+volt)# observed energy in eV
+        #self.E_samp = (1+y_model(self.ER_samp)*volt/eps)*self.ER_samp# observed energy in eV
 
     def Nuclei(self):
         """
@@ -101,7 +151,7 @@ class GeHV(Detector):
         return np.interp(E*keV,self.E_samp,deriv)*np.ones(len(self.Nuclei())) # account for both the derivation, and the kg of each isotope per kg of Ge
     
     def ROI(self):
-        return [0.3,10]
+        return [0.1,10]
     
     def Emax(self):
         return 20
