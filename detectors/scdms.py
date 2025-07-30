@@ -21,7 +21,7 @@ def Y_Ge_Lindhard(ER):
     Z = 32
     A = 72.64
     k = 0.133*pow(Z,2/3)*pow(A,-0.5)
-    ep = 11.5*ER*pow(Z,-7/3)/keV ## for this we need ER in keV... I think...
+    ep = 11.5*ER*pow(Z,-7/3)/keV ## for this we need ER in keV
     g = 3*pow(ep,0.15)+0.7*pow(ep,0.6)+ep
     return k*g/(1+k*g)
 
@@ -30,16 +30,16 @@ def Y_Ge_Sarkis_mean(ER):
     Ionisation yield for Ge using the fit parameters and the corrected Lindhard model
     [ER] = [eV] recoil energy
     """
+    k = 0.162
     Z = 32
     A = 72.64
     c0 = 3.0E-4
     c1 = 0.62E-5
     U = 0.02
-    k = 0.133*pow(Z,2./3.)*pow(A,-1./2.)
     cz = 11.5*pow(Z,-7./3.)
-    epsR = cz*ER/keV ## for this we need ER in keV... I think...
+    epsR = cz*ER/keV ## for this we need ER in keV
     u = cz*U
-    eps = epsR - u
+    eps = np.where(epsR>= u,epsR - u,0)
     g = 3*pow(eps,0.15) + 0.7*pow(eps,0.6) + eps
     nuL = eps/(1+k*g)
     nu = nuL + c0*pow(eps,0.5) + c1 + u
@@ -52,14 +52,14 @@ def Y_Ge_Sarkis_min(ER):
     """
     Z = 32
     A = 72.64
+    k = 0.162 - 0.021
     c0 = (3.0-1.3)*1E-4
     c1 = (0.62-0.12)*1E-5
-    U = 0.02-0.01
-    k = 0.133*pow(Z,2./3.)*pow(A,-1./2.)
+    U = 0.02-0.015
     cz = 11.5*pow(Z,-7./3.)
-    epsR = cz*ER/keV ## for this we need ER in keV... I think...
+    epsR = cz*ER/keV ## for this we need ER in keV
     u = cz*U
-    eps = epsR - u
+    eps = np.where(epsR>= u,epsR - u,0)
     g = 3*pow(eps,0.15) + 0.7*pow(eps,0.6) + eps
     nuL = eps/(1+k*g)
     nu = nuL + c0*pow(eps,0.5) + c1 + u
@@ -72,14 +72,14 @@ def Y_Ge_Sarkis_max(ER):
     """
     Z = 32
     A = 72.64
+    k = 0.162 + 0.028
     c0 = (3.0+1.3)*1E-4
     c1 = (0.62+0.12)*1E-5
     U = 0.02+0.01
-    k = 0.133*pow(Z,2./3.)*pow(A,-1./2.)
     cz = 11.5*pow(Z,-7./3.)
-    epsR = cz*ER/keV ## for this we need ER in keV... I think...
+    epsR = cz*ER/keV ## for this we need ER in keV
     u = cz*U
-    eps = epsR - u
+    eps = np.where(epsR>= u,epsR - u,0)
     g = 3*pow(eps,0.15) + 0.7*pow(eps,0.6) + eps
     nuL = eps/(1+k*g)
     nu = nuL + c0*pow(eps,0.5) + c1 + u
@@ -107,7 +107,18 @@ def Y_Si_LTP(ER):
 
 
 class GeHV(Detector):
-    def __init__(self, volt, shell_model="Fitz",y_model=Y_Ge_LTP):
+    def __init__(self, volt, shell_model="Fitz",y_model=Y_Ge_LTP,A=None,B=None,sig_E=None):
+        """
+        SuperCDMS-like Ge HV detector. 
+        Input parameters:
+        -----------------
+        volt = voltage detector is held at [V]
+        shell_model = nuclear shell model assumptions; Fitz, JUN45, jj44b
+        y_model = ionisation yield function. Can use one of the ones defined above, or pass any function that takes a single argument ER
+        A = resolution model parameter that scales with E^2 [unitless]
+        B = resolution model parameter that scales with E [keV]
+        sig_E = resolution model parameter independent of E [keV]
+        """
         ## allow for initialisation with different shell models
         self.shell_model = shell_model
 
@@ -122,9 +133,22 @@ class GeHV(Detector):
 
         # construct arrays for E_obs --> ER interpolation
         eps = 3.0 #eV
-        self.ER_samp = np.arange(0,50*keV,0.1) # recoil energy in eV range up to 100 keV in steps of 100 eV
+        self.ER_samp = np.arange(0,50*keV,100) # recoil energy in eV range up to 100 keV in steps of 100 eV
         self.E_samp = (y_model(self.ER_samp)*volt+eps)*self.ER_samp/(eps+volt)# observed energy in eV
-        #self.E_samp = (1+y_model(self.ER_samp)*volt/eps)*self.ER_samp# observed energy in eV
+
+        # Parameters for resolution
+        if A==None:
+            self.A = 5E-3
+        else:
+            self.A = A
+        if B==None:
+            self.B = 0.7/keV # 0.7 eV
+        else:
+            self.B = B
+        if sig_E==None:
+            self.sig_E = 10/keV # 10 eV
+        else:
+            self.sig_E = sig_E
 
     def Nuclei(self):
         """
@@ -151,17 +175,14 @@ class GeHV(Detector):
         return np.interp(E*keV,self.E_samp,deriv)*np.ones(len(self.Nuclei())) # account for both the derivation, and the kg of each isotope per kg of Ge
     
     def ROI(self):
-        return [0.1,10]
+        return [0.01,30]
     
     def Emax(self):
         return 20
     
     def DeltaE(self,E):
         # Lets assume CDMSlite values: arxiv 1911.11905. These are for a Ge iZIP, so we'll at least adjust the baseline res to what we hope for
-        A = 5E-3
-        B = 0.7/keV # 0.7 eV
-        sig_E = 34/keV # 34 eV
-        return np.sqrt(B*E+pow(A*E,2)+pow(sig_E,2)) # these resolutions are defined for eV so need to convert to keV for comp of DeltaE
+        return np.sqrt(self.B*E+pow(self.A*E,2)+pow(self.sig_E,2)) # these resolutions are defined for eV so need to convert to keV for comp of DeltaE
     
     def Res(self,E1,E2):
         # We assume E1 is the observed energy (E' in accompanying documentation) and E2 is the energy that will be integrated over (E_ee in accompanying documentation)
@@ -172,7 +193,18 @@ class GeHV(Detector):
         return 0.85
     
 class SiHV(Detector):
-    def __init__(self, volt, shell_model="Fitz"):
+    def __init__(self, volt, shell_model="Fitz", y_model=Y_Si_LTP,A=None,B=None,sig_E=None):
+        """
+        SuperCDMS-like Si HV detector. 
+        Input parameters:
+        -----------------
+        volt = voltage detector is held at [V]
+        shell_model = nuclear shell model assumptions; Fitz, USDB
+        y_model = ionisation yield function. Can use one of the ones defined above, or pass any function that takes a single argument ER
+        A = resolution model parameter that scales with E^2 [unitless]
+        B = resolution model parameter that scales with E [keV]
+        sig_E = resolution model parameter independent of E [keV]
+        """
         ## allow for initialisation with different shell models
         self.shell_model = shell_model
         self.V = volt # voltage detector is run at in volts
@@ -184,8 +216,21 @@ class SiHV(Detector):
         # construct arrays for E_osb --> ER interpolation
         eps = 3.82 #eV
         self.ER_samp = np.arange(0,100*keV,100) # recoil energy in eV range up to 100 keV in steps of 100 eV
-        #self.E_samp = (Y_Si_LTP(self.ER_samp)*volt+eps)*self.ER_samp/(eps+volt)# observed energy in eV
-        self.E_samp = (1+Y_Si_LTP(self.ER_samp)*volt/eps)*self.ER_samp# observed energy in eV
+        self.E_samp = (y_model(self.ER_samp)*volt+eps)*self.ER_samp/(eps+volt)# observed energy in eV
+
+        # Parameters for resolution
+        if A==None:
+            self.A = 5E-3
+        else:
+            self.A = A
+        if B==None:
+            self.B = 0.7/keV # 0.7 eV
+        else:
+            self.B = B
+        if sig_E==None:
+            self.sig_E = 13/keV # 34 eV
+        else:
+            self.sig_E = sig_E
 
     def Nuclei(self):
         return [[self.si28,0.922],[self.si29,0.047],[self.si30,0.031]]
@@ -216,10 +261,7 @@ class SiHV(Detector):
     
     def DeltaE(self,E):
         # Lets assume CDMSlite values: arxiv 1911.11905. These are for a Ge iZIP, so we'll at least adjust the baseline res to what we hope for
-        A = 5E-3
-        B = 0.7/keV
-        sig_E = 13/keV # 13 eV
-        return np.sqrt(B*E+pow(A*E,2)+pow(sig_E,2)) # these resolutions are defined for eV so need to convert to keV for comp of DeltaE
+        return np.sqrt(self.B*E+pow(self.A*E,2)+pow(self.sig_E,2)) # these resolutions are defined for eV so need to convert to keV for comp of DeltaE
     
     def Res(self,E1,E2):
         # We assume E1 is the observed energy (E' in accompanying documentation) and E2 is the energy that will be integrated over (E_ee in accompanying documentation)
