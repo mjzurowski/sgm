@@ -63,11 +63,11 @@ class Anand(ABC):
             dist: velocity distribution [unitless]
         """
         vm = self.vmin(Target,mX,ER)
-        dsdER = self.dsigdER(Target,ER,mX,sig,vm)
+        _dsigdER = self.dsigdER(Target,ER,mX,sig,vm)
         try: 
-            return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(dsdER[0]*VelDist.gdist(vm) + dsdER[1]*VelDist.hdist(vm)) 
+            return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*(_dsigdER[0]*VelDist.gdist(vm) + _dsigdER[1]*VelDist.hdist(vm)) 
         except:
-            return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*VelDist.gdist(vm)*dsdER
+            return cpd_conversion*Target.N_T()*(VelDist.rho/mX)*VelDist.gdist(vm)*_dsigdER
                 
 
 ########################################################

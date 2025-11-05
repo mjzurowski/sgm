@@ -1,12 +1,11 @@
-from dmmodel import DMModel
 import numpy as np
 from constants import *
 
 ######################################################
 ### Class definition for standard SI WIMP with Helm form factors
-#### Nore that this is equivalent to NREFT with F11
+#### Nore that this is equivalent to NREFT with F1
     
-class SIWIMP_Helm(DMModel):
+class SIWIMP_Helm:
     def vmin(self,Target,mX,ER):
        """
        [mX] = [eV] DM mass

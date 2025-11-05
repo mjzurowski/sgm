@@ -1,10 +1,9 @@
-from dmmodel import DMModel
 import numpy as np
 from constants import *
 
 ### Class definition for inelastic SI WIMP.
 
-class SIInel(DMModel):
+class SIInel:
     def vmin(self,Target,mX,ER,delta):
        """
        [mX] = [eV] DM mass
